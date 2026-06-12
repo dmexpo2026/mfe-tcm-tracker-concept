@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MFE TCM Tracker — AI Agent | Management Overview</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --teal:    #00d4c8;
+    --teal2:   #00b4aa;
+    --blue:    #1a2f6e;
+    --blue2:   #0f1f4d;
+    --indigo:  #6366f1;
+    --purple:  #8b5cf6;
+    --green:   #10b981;
+    --amber:   #f59e0b;
+    --red:     #ef4444;
+    --white:   #ffffff;
+    --gray50:  #f8fafc;
+    --gray100: #f1f5f9;
+    --gray200: #e2e8f0;
+    --gray400: #94a3b8;
+    --gray600: #475569;
+    --gray800: #1e293b;
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--gray50);
+    color: var(--gray800);
+    overflow-x: hidden;
+  }
+
+  /* ── HERO ─────────────────────────────────────────────────── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: linear-gradient(135deg, #0a1628 0%, #0f2545 35%, #1a2f6e 70%, #0d4a6b 100%);
+    padding: 60px 24px 80px;
+  }
+
+  /* animated mesh background */
+  .hero-bg {
+    position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 70% 50% at 15% 20%, rgba(0,212,200,.12) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 60% at 85% 80%, rgba(99,102,241,.15) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 50% 50%, rgba(0,180,170,.06) 0%, transparent 70%);
+  }
+
+  /* floating grid dots */
+  .hero-dots {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image: radial-gradient(circle, rgba(255,255,255,.07) 1px, transparent 1px);
+    background-size: 36px 36px;
+    animation: dotFade 8s ease-in-out infinite alternate;
+  }
+  @keyframes dotFade { from { opacity:.4 } to { opacity:1 } }
+
+  /* top bar */
+  .hero-topbar {
+    position: absolute; top: 24px; left: 0; right: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 48px; z-index: 10;
+  }
+  .siemens-logo {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 12px; font-weight: 700; letter-spacing: 2px;
+    color: rgba(255,255,255,.5); text-transform: uppercase;
+  }
+  .siemens-logo svg { opacity: .6; }
+  .hero-badge {
+    font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+    color: var(--teal); text-transform: uppercase;
+    background: rgba(0,212,200,.1); border: 1px solid rgba(0,212,200,.3);
+    padding: 4px 14px; border-radius: 20px;
+  }
+
+  /* main content */
+  .hero-content { position: relative; z-index: 5; text-align: center; max-width: 860px; }
+
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 12px; font-weight: 600; letter-spacing: 1.8px; text-transform: uppercase;
+    color: var(--teal); margin-bottom: 24px;
+    animation: fadeUp .6s .1s both;
+  }
+  .hero-tag::before, .hero-tag::after {
+    content: ''; display: block; width: 30px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--teal));
+  }
+  .hero-tag::after { transform: scaleX(-1); }
+
+  .hero-title {
+    font-size: clamp(38px, 6vw, 72px); font-weight: 900; line-height: 1.05;
+    color: #fff; margin-bottom: 20px;
+    animation: fadeUp .6s .2s both;
+  }
+  .hero-title span {
+    background: linear-gradient(90deg, var(--teal), #60efff, var(--indigo));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    font-size: clamp(16px, 2vw, 20px); font-weight: 400; line-height: 1.6;
+    color: rgba(255,255,255,.7); max-width: 660px; margin: 0 auto 48px;
+    animation: fadeUp .6s .3s both;
+  }
+
+  .hero-pills {
+    display: flex; flex-wrap: wrap; gap: 12px; justify-content: center;
+    animation: fadeUp .6s .4s both;
+    margin-bottom: 60px;
+  }
+  .pill {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 500; color: rgba(255,255,255,.85);
+    background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12);
+    backdrop-filter: blur(8px);
+    padding: 8px 18px; border-radius: 40px;
+    transition: all .2s;
+  }
+  .pill:hover { background: rgba(255,255,255,.13); border-color: rgba(0,212,200,.4); }
+  .pill-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--teal); }
+
+  /* stats row */
+  .hero-stats {
+    display: flex; flex-wrap: wrap; gap: 0; justify-content: center;
+    animation: fadeUp .6s .5s both;
+  }
+  .stat-item {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 16px 40px;
+    border-right: 1px solid rgba(255,255,255,.1);
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-num {
+    font-size: 36px; font-weight: 800; color: #fff;
+    background: linear-gradient(135deg, var(--teal), #60efff);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .stat-label { font-size: 12px; color: rgba(255,255,255,.45); letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
+
+  /* scroll hint */
+  .scroll-hint {
+    position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    font-size: 11px; color: rgba(255,255,255,.3); letter-spacing: 1px; text-transform: uppercase;
+    animation: bounce 2s infinite;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(6px); }
+  }
+
+  /* ── SECTION BASE ─────────────────────────────────────────── */
+  section { padding: 80px 24px; }
+  .container { max-width: 1120px; margin: 0 auto; }
+  .section-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase;
+    color: var(--teal2); margin-bottom: 12px;
+  }
+  .section-title {
+    font-size: clamp(26px, 3.5vw, 42px); font-weight: 800; line-height: 1.2;
+    color: var(--gray800); margin-bottom: 16px;
+  }
+  .section-sub {
+    font-size: 17px; line-height: 1.7; color: var(--gray600);
+    max-width: 580px;
+  }
+
+  /* ── HERO DASHBOARD CTA ────────────────────────────────────── */
+  .hero-cta-row {
+    margin-top: 36px; display: flex; justify-content: center;
+    animation: fadeUp .6s .65s both;
+  }
+  .hero-cta-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: linear-gradient(135deg, rgba(0,212,200,.15), rgba(0,212,200,.05));
+    border: 1.5px solid rgba(0,212,200,.6);
+    color: var(--teal); font-size: 15px; font-weight: 700;
+    padding: 16px 36px; border-radius: 50px;
+    text-decoration: none;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 0 0 0 rgba(0,212,200,.4), 0 8px 32px rgba(0,212,200,.15);
+    animation: heroBtnPulse 2.8s ease-in-out infinite;
+    transition: background .2s, transform .2s;
+    position: relative; overflow: hidden;
+  }
+  .hero-cta-btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(0,212,200,.12) 50%, transparent 100%);
+    transform: translateX(-100%);
+    animation: heroBtnSheen 3s 1.5s ease-in-out infinite;
+  }
+  @keyframes heroBtnSheen {
+    0%   { transform: translateX(-100%); }
+    60%  { transform: translateX(100%); }
+    100% { transform: translateX(100%); }
+  }
+  @keyframes heroBtnPulse {
+    0%,100% { box-shadow: 0 0 0 0 rgba(0,212,200,.5), 0 8px 32px rgba(0,212,200,.15); }
+    50%     { box-shadow: 0 0 0 10px rgba(0,212,200,0), 0 8px 32px rgba(0,212,200,.3); }
+  }
+  .hero-cta-btn:hover { background: rgba(0,212,200,.2); transform: translateY(-2px); }
+  .live-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+    background: rgba(16,185,129,.2); color: #34d399; border: 1px solid rgba(16,185,129,.4);
+    padding: 3px 9px; border-radius: 20px; position: relative;
+  }
+  .live-badge::before {
+    content: '';
+    width: 6px; height: 6px; border-radius: 50%; background: #34d399;
+    animation: livePulse 1.5s infinite;
+  }
+  @keyframes livePulse {
+    0%,100% { opacity:1; transform:scale(1); }
+    50%     { opacity:.4; transform:scale(.7); }
+  }
+
+  /* ── DASHBOARD PREVIEW ───────────────────────────────────────── */
+  .preview-section {
+    background: linear-gradient(180deg, #060e1e 0%, #0a1628 40%, #0c1d3a 100%);
+    padding: 0 24px 100px;
+    position: relative; overflow: hidden;
+  }
+  .preview-section::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,.025) 1px, transparent 1px);
+    background-size: 30px 30px;
+    pointer-events: none;
+  }
+  .preview-section::after {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 120px;
+    background: linear-gradient(to bottom, transparent, var(--gray50));
+    pointer-events: none; z-index: 10;
+  }
+  .preview-inner {
+    position: relative; z-index: 5;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  /* top bridge from hero */
+  .preview-bridge {
+    width: 1.5px; height: 60px;
+    background: linear-gradient(to bottom, rgba(0,212,200,.4), transparent);
+    margin-bottom: 0;
+  }
+  .preview-headline {
+    text-align: center; padding: 0 16px 40px;
+  }
+  .preview-headline .section-label { color: var(--teal); justify-content: center; display: flex; }
+  .preview-headline h2 {
+    font-size: clamp(24px,3.5vw,40px); font-weight: 800; color: #fff; margin: 10px 0 14px;
+  }
+  .preview-headline p {
+    font-size: 16px; color: rgba(255,255,255,.55); max-width: 500px; margin: 0 auto;
+  }
+  /* browser chrome mockup */
+  .browser-mockup {
+    width: 100%; max-width: 1060px;
+    border-radius: 16px; overflow: hidden;
+    box-shadow:
+      0 0 0 1px rgba(0,212,200,.25),
+      0 0 60px rgba(0,212,200,.12),
+      0 40px 120px rgba(0,0,0,.7);
+    animation: fadeUp .7s .2s both;
+  }
+  .browser-bar {
+    background: #1a2235; padding: 12px 18px;
+    display: flex; align-items: center; gap: 14px;
+    border-bottom: 1px solid rgba(255,255,255,.06);
+  }
+  .browser-dots { display: flex; gap: 7px; }
+  .browser-dots span {
+    width: 12px; height: 12px; border-radius: 50%;
+  }
+  .browser-dots span:nth-child(1) { background: #ff5f57; }
+  .browser-dots span:nth-child(2) { background: #ffbd2e; }
+  .browser-dots span:nth-child(3) { background: #28c840; }
+  .browser-url {
+    flex: 1; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.07);
+    border-radius: 8px; padding: 6px 14px;
+    font-size: 12px; color: rgba(255,255,255,.4); font-family: monospace;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .browser-url-dot { width: 7px; height: 7px; border-radius: 50%; background: #28c840; flex-shrink:0; }
+  .browser-iframe-wrap {
+    position: relative; height: 580px; overflow: hidden;
+    background: #0f172a;
+  }
+  .browser-iframe-wrap iframe {
+    width: 100%; height: 900px;
+    border: none; display: block;
+    transform: scale(0.644); transform-origin: top left;
+    pointer-events: none;
+  }
+  .iframe-overlay {
+    position: absolute; inset: 0; cursor: pointer; z-index: 5;
+    background: transparent;
+  }
+  .iframe-overlay-hint {
+    position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: rgba(0,0,0,.7); backdrop-filter: blur(8px);
+    border: 1px solid rgba(0,212,200,.3); border-radius: 40px;
+    padding: 8px 20px; font-size: 12px; font-weight: 600; color: var(--teal);
+    display: flex; align-items: center; gap: 8px; white-space: nowrap;
+    opacity: 0; transition: opacity .3s;
+    pointer-events: none;
+  }
+  .browser-mockup:hover .iframe-overlay-hint { opacity: 1; }
+  /* open button */
+  .preview-open-btn {
+    display: inline-flex; align-items: center; gap: 10px; margin-top: 36px;
+    background: linear-gradient(135deg, var(--teal), var(--teal2));
+    color: #071020; font-size: 15px; font-weight: 800;
+    padding: 16px 40px; border-radius: 50px;
+    text-decoration: none;
+    box-shadow: 0 8px 32px rgba(0,212,200,.45), 0 2px 8px rgba(0,0,0,.3);
+    transition: all .25s;
+    animation: fadeUp .7s .4s both;
+  }
+  .preview-open-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 44px rgba(0,212,200,.6), 0 2px 8px rgba(0,0,0,.3);
+  }
+  .preview-open-btn svg { transition: transform .2s; }
+  .preview-open-btn:hover svg { transform: translateX(4px); }
+
+  /* ── PROBLEM ──────────────────────────────────────────────── */
+  .problem-section { background: #fff; }
+  .problem-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center;
+    margin-top: 56px;
+  }
+  @media (max-width: 768px) { .problem-grid { grid-template-columns: 1fr; gap: 40px; } }
+
+  .problem-list { display: flex; flex-direction: column; gap: 20px; }
+  .problem-item {
+    display: flex; align-items: flex-start; gap: 16px;
+    padding: 20px 24px; border-radius: 14px;
+    background: var(--gray50); border: 1px solid var(--gray200);
+    transition: all .25s;
+    opacity: 0; transform: translateX(-20px);
+  }
+  .problem-item.visible { opacity: 1; transform: translateX(0); }
+  .problem-item:hover {
+    border-color: rgba(239,68,68,.3);
+    box-shadow: 0 4px 20px rgba(239,68,68,.08);
+  }
+  .problem-icon {
+    width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .problem-icon.red { background: rgba(239,68,68,.1); }
+  .problem-icon.amber { background: rgba(245,158,11,.1); }
+  .problem-icon.gray { background: rgba(148,163,184,.12); }
+  .problem-icon.purple { background: rgba(139,92,246,.1); }
+  .problem-text h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; color: var(--gray800); }
+  .problem-text p { font-size: 13px; color: var(--gray600); line-height: 1.5; }
+
+  /* ── HOW IT WORKS ─────────────────────────────────────────── */
+  .how-section {
+    background: linear-gradient(160deg, #0a1628 0%, #0f2545 60%, #1a2f6e 100%);
+  }
+  .how-section .section-title { color: #fff; }
+  .how-section .section-label { color: var(--teal); }
+  .how-section .section-sub { color: rgba(255,255,255,.6); }
+
+  .flow-steps {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+    margin-top: 60px; position: relative;
+  }
+  @media (max-width: 900px) { .flow-steps { grid-template-columns: 1fr 1fr; gap: 24px; } }
+  @media (max-width: 500px) { .flow-steps { grid-template-columns: 1fr; } }
+
+  /* connector line */
+  .flow-steps::before {
+    content: '';
+    position: absolute; top: 44px; left: 12.5%; right: 12.5%; height: 2px;
+    background: linear-gradient(90deg, var(--teal), var(--indigo), var(--purple));
+    opacity: .4;
+  }
+  @media (max-width: 900px) { .flow-steps::before { display: none; } }
+
+  .flow-step {
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+    padding: 0 20px;
+    opacity: 0; transform: translateY(20px);
+    transition: opacity .5s, transform .5s;
+  }
+  .flow-step.visible { opacity: 1; transform: translateY(0); }
+  .flow-step:nth-child(1) { transition-delay: .1s; }
+  .flow-step:nth-child(2) { transition-delay: .2s; }
+  .flow-step:nth-child(3) { transition-delay: .3s; }
+  .flow-step:nth-child(4) { transition-delay: .4s; }
+
+  .step-circle {
+    width: 88px; height: 88px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 24px; position: relative; z-index: 2;
+    transition: transform .3s;
+  }
+  .flow-step:hover .step-circle { transform: scale(1.08); }
+  .step-circle.s1 { background: linear-gradient(135deg, #00d4c8, #00b4aa); box-shadow: 0 8px 32px rgba(0,212,200,.4); }
+  .step-circle.s2 { background: linear-gradient(135deg, #6366f1, #818cf8); box-shadow: 0 8px 32px rgba(99,102,241,.4); }
+  .step-circle.s3 { background: linear-gradient(135deg, #8b5cf6, #a78bfa); box-shadow: 0 8px 32px rgba(139,92,246,.4); }
+  .step-circle.s4 { background: linear-gradient(135deg, #10b981, #34d399); box-shadow: 0 8px 32px rgba(16,185,129,.4); }
+  .step-num {
+    position: absolute; top: -4px; right: -4px; width: 24px; height: 24px;
+    background: #fff; border-radius: 50%; font-size: 10px; font-weight: 800;
+    color: var(--blue); display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,.2);
+  }
+  .step-title { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+  .step-desc { font-size: 13px; color: rgba(255,255,255,.55); line-height: 1.55; }
+  .step-tag {
+    margin-top: 12px; font-size: 10px; font-weight: 600; letter-spacing: 1px;
+    text-transform: uppercase; color: rgba(255,255,255,.3);
+    background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+    padding: 3px 10px; border-radius: 20px;
+  }
+
+  /* ── CAPABILITIES ─────────────────────────────────────────── */
+  .caps-section { background: var(--gray50); }
+
+  .caps-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;
+    margin-top: 56px;
+  }
+  @media (max-width: 700px) { .caps-grid { grid-template-columns: 1fr; } }
+
+  .cap-card {
+    background: #fff; border: 1px solid var(--gray200); border-radius: 20px;
+    padding: 32px; position: relative; overflow: hidden;
+    transition: all .3s; cursor: default;
+    opacity: 0; transform: translateY(16px);
+  }
+  .cap-card.visible { opacity: 1; transform: translateY(0); }
+  .cap-card:hover {
+    border-color: transparent;
+    box-shadow: 0 20px 60px rgba(0,0,0,.1), 0 0 0 1px rgba(0,212,200,.2);
+    transform: translateY(-4px) !important;
+  }
+  .cap-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    border-radius: 20px 20px 0 0;
+    opacity: 0; transition: opacity .3s;
+  }
+  .cap-card:hover::before { opacity: 1; }
+  .cap-card.c1::before { background: linear-gradient(90deg, var(--teal), #60efff); }
+  .cap-card.c2::before { background: linear-gradient(90deg, var(--indigo), var(--purple)); }
+  .cap-card.c3::before { background: linear-gradient(90deg, var(--purple), #ec4899); }
+  .cap-card.c4::before { background: linear-gradient(90deg, var(--green), #34d399); }
+
+  .cap-icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px; margin-bottom: 20px;
+  }
+  .cap-icon.i1 { background: rgba(0,212,200,.1); }
+  .cap-icon.i2 { background: rgba(99,102,241,.1); }
+  .cap-icon.i3 { background: rgba(139,92,246,.1); }
+  .cap-icon.i4 { background: rgba(16,185,129,.1); }
+
+  .cap-title { font-size: 17px; font-weight: 700; margin-bottom: 10px; color: var(--gray800); }
+  .cap-desc { font-size: 14px; line-height: 1.65; color: var(--gray600); }
+  .cap-bullets { margin-top: 16px; display: flex; flex-direction: column; gap: 8px; }
+  .cap-bullet {
+    display: flex; align-items: flex-start; gap: 8px;
+    font-size: 13px; color: var(--gray600); line-height: 1.4;
+  }
+  .cap-bullet::before {
+    content: ''; width: 5px; height: 5px; border-radius: 50%;
+    background: var(--teal2); margin-top: 6px; flex-shrink: 0;
+  }
+
+  /* ── ARCHITECTURE ─────────────────────────────────────────── */
+  .arch-section { background: #fff; }
+  .arch-container {
+    margin-top: 60px; display: grid; grid-template-columns: 1fr 1.4fr; gap: 64px; align-items: center;
+  }
+  @media (max-width: 800px) { .arch-container { grid-template-columns: 1fr; } }
+
+  .arch-text { display: flex; flex-direction: column; gap: 28px; }
+  .arch-point { display: flex; align-items: flex-start; gap: 16px; }
+  .arch-dot {
+    width: 10px; height: 10px; border-radius: 50%; margin-top: 6px; flex-shrink: 0;
+  }
+  .arch-dot.teal { background: var(--teal); box-shadow: 0 0 8px var(--teal); }
+  .arch-dot.indigo { background: var(--indigo); box-shadow: 0 0 8px var(--indigo); }
+  .arch-dot.green { background: var(--green); box-shadow: 0 0 8px var(--green); }
+  .arch-point h4 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .arch-point p { font-size: 13px; color: var(--gray600); line-height: 1.5; }
+
+  /* SVG architecture diagram */
+  .arch-diagram-wrap {
+    background: linear-gradient(135deg, #0a1628, #0f2545);
+    border-radius: 24px; padding: 32px;
+    box-shadow: 0 24px 80px rgba(0,0,0,.25);
+    position: relative; overflow: hidden;
+  }
+  .arch-diagram-wrap::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,.04) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  /* ── BENEFITS ─────────────────────────────────────────────── */
+  .benefits-section {
+    background: linear-gradient(135deg, #f0fdf9 0%, #eff6ff 50%, #f5f3ff 100%);
+  }
+  .benefits-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 56px;
+  }
+  @media (max-width: 800px) { .benefits-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 500px) { .benefits-grid { grid-template-columns: 1fr; } }
+
+  .benefit-card {
+    background: rgba(255,255,255,.8); backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,.9);
+    border-radius: 18px; padding: 28px 24px; text-align: center;
+    transition: all .3s;
+    opacity: 0; transform: translateY(14px);
+  }
+  .benefit-card.visible { opacity: 1; transform: translateY(0); }
+  .benefit-card:hover {
+    transform: translateY(-6px) !important;
+    box-shadow: 0 20px 50px rgba(0,0,0,.1);
+  }
+  .benefit-num {
+    font-size: 42px; font-weight: 900; line-height: 1;
+    margin-bottom: 6px;
+  }
+  .benefit-num.t { background: linear-gradient(135deg, var(--teal), #60efff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .benefit-num.i { background: linear-gradient(135deg, var(--indigo), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .benefit-num.g { background: linear-gradient(135deg, var(--green), #34d399); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .benefit-label { font-size: 14px; font-weight: 700; color: var(--gray800); margin-bottom: 6px; }
+  .benefit-desc { font-size: 12px; color: var(--gray600); line-height: 1.5; }
+
+  /* ── TECH STACK ───────────────────────────────────────────── */
+  .stack-section { background: #fff; }
+  .stack-grid {
+    display: flex; flex-wrap: wrap; gap: 16px; margin-top: 48px; justify-content: center;
+  }
+  .stack-badge {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 22px; border-radius: 50px;
+    font-size: 13px; font-weight: 600;
+    border: 1.5px solid var(--gray200); color: var(--gray800);
+    background: var(--gray50);
+    transition: all .2s;
+  }
+  .stack-badge:hover {
+    background: #fff;
+    border-color: var(--teal2);
+    box-shadow: 0 4px 16px rgba(0,180,170,.15);
+    transform: translateY(-2px);
+  }
+  .stack-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  /* ── FOOTER CTA ───────────────────────────────────────────── */
+  .cta-section {
+    background: linear-gradient(135deg, #0a1628 0%, #0f2545 50%, #1a2f6e 100%);
+    padding: 80px 24px;
+    text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .cta-section::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,.04) 1px, transparent 1px);
+    background-size: 36px 36px;
+  }
+  .cta-glow {
+    position: absolute; top: -80px; left: 50%; transform: translateX(-50%);
+    width: 500px; height: 300px;
+    background: radial-gradient(ellipse, rgba(0,212,200,.2) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .cta-title {
+    font-size: clamp(28px, 4vw, 48px); font-weight: 800; color: #fff;
+    margin-bottom: 16px; position: relative;
+  }
+  .cta-sub {
+    font-size: 18px; color: rgba(255,255,255,.6); margin-bottom: 40px;
+    max-width: 520px; margin-left: auto; margin-right: auto; position: relative;
+  }
+  .cta-btns { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; position: relative; }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: linear-gradient(135deg, var(--teal), var(--teal2));
+    color: #0a1628; font-size: 14px; font-weight: 700;
+    padding: 14px 32px; border-radius: 50px;
+    border: none; cursor: pointer;
+    box-shadow: 0 8px 24px rgba(0,212,200,.4);
+    transition: all .2s;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0,212,200,.5); }
+  .btn-secondary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,.07); color: rgba(255,255,255,.85);
+    font-size: 14px; font-weight: 600;
+    padding: 14px 32px; border-radius: 50px;
+    border: 1px solid rgba(255,255,255,.15); cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: all .2s;
+  }
+  .btn-secondary:hover { background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.3); }
+
+  .footer-note {
+    margin-top: 40px; font-size: 12px; color: rgba(255,255,255,.25);
+    position: relative;
+  }
+
+  /* ── ANIMATIONS ───────────────────────────────────────────── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* pulse animation on step circles */
+  @keyframes pulseRing {
+    0%   { box-shadow: 0 0 0 0 rgba(0,212,200,.4); }
+    70%  { box-shadow: 0 0 0 16px rgba(0,212,200,0); }
+    100% { box-shadow: 0 0 0 0 rgba(0,212,200,0); }
+  }
+  .step-circle.s1 { animation: pulseRing 3s .5s infinite; }
+
+  /* shimmer on hero title */
+  @keyframes shimmer {
+    0%   { background-position: -200% center; }
+    100% { background-position:  200% center; }
+  }
+  .hero-title span {
+    background-size: 200% auto;
+    animation: shimmer 4s linear infinite;
+  }
+</style>
+<script>
+(function () {
+  // ── embedded dashboard (base64) ──────────────────────────────────
+  const _B64 = "PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVuIiBkYXRhLXRoZW1lPSJkYXJrIj4KPGhlYWQ+CjxtZXRhIGNoYXJzZXQ9IlVURi04Ij4KPG1ldGEgbmFtZT0idmlld3BvcnQiIGNvbnRlbnQ9IndpZHRoPWRldmljZS13aWR0aCwgaW5pdGlhbC1zY2FsZT0xLjAiPgo8dGl0bGU+TUZFIFRDTSBUcmFja2VyIERhc2hib2FyZDwvdGl0bGU+CjxzdHlsZT4KOnJvb3QgewogIC0tYmc6ICMwZjE3MmE7IC0tc3VyZmFjZTogIzFlMjkzYjsgLS1zdXJmYWNlMjogIzMzNDE1NTsKICAtLXRleHQ6ICNmMWY1Zjk7IC0tdGV4dC1tdXRlZDogIzk0YTNiODsgLS1ib3JkZXI6ICM0NzU1Njk7CiAgLS1ncmVlbjogIzZlZTdiNzsgLS15ZWxsb3c6ICNmZGU2OGE7IC0tcmVkOiAjZmNhNWE1OyAtLWJsdWU6ICM5M2M1ZmQ7IC0tZ3JheTogI2QxZDVkYjsKICAtLW9yYW5nZTogI2ZkYmE3NDsKICAtLWdyZWVuLWJnOiAjMGQ5NDg4OyAtLXllbGxvdy1iZzogI2Q5NzcwNjsgLS1yZWQtYmc6ICNkYzI2MjY7IC0tYmx1ZS1iZzogIzNiODJmNjsKfQpbZGF0YS10aGVtZT0ibGlnaHQiXSB7CiAgLS1iZzogI2YxZjVmOTsgLS1zdXJmYWNlOiAjZmZmZmZmOyAtLXN1cmZhY2UyOiAjZTJlOGYwOwogIC0tdGV4dDogIzBmMTcyYTsgLS10ZXh0LW11dGVkOiAjNDc1NTY5OyAtLWJvcmRlcjogI2NiZDVlMTsKICAtLWdyZWVuOiAjMDU5NjY5OyAtLXllbGxvdzogI2Q5NzcwNjsgLS1yZWQ6ICNkYzI2MjY7IC0tYmx1ZTogIzI1NjNlYjsgLS1ncmF5OiAjNGI1NTYzOwogIC0tZ3JlZW4tYmc6ICMwNTk2Njk7IC0teWVsbG93LWJnOiAjZDk3NzA2OyAtLXJlZC1iZzogI2RjMjYyNjsgLS1ibHVlLWJnOiAjMjU2M2ViOwp9CltkYXRhLXRoZW1lPSJsaWdodCJdIC5yZWxlYXNlLWNwIGEsCltkYXRhLXRoZW1lPSJsaWdodCJdIC5hbm5vdGF0aW9uIGEgeyBjb2xvcjojMWQ0ZWQ4OyB9CltkYXRhLXRoZW1lPSJsaWdodCJdIC5jYXJkLWhlYWRlci1ub3RpZnkgeyBiYWNrZ3JvdW5kOiM2MjY0YTc7IH0KW2RhdGEtdGhlbWU9ImxpZ2h0Il0gLnNlbmQtc3RhdHVzLWJ0biB7IGJhY2tncm91bmQ6IzYyNjRhNzsgfQpbZGF0YS10aGVtZT0ibGlnaHQiXSAubm90aWZ5LWJ0biB7IGJhY2tncm91bmQ6IzYyNjRhNzsgfQpbZGF0YS10aGVtZT0ibGlnaHQiXSAuc3VtbWFyeS1jYXJkIHsgYm9yZGVyLWNvbG9yOnZhcigtLWJvcmRlcik7IGJveC1zaGFkb3c6MCAxcHggM3B4IHJnYmEoMCwwLDAsMC4wOCk7IH0KW2RhdGEtdGhlbWU9ImxpZ2h0Il0gLnRyYWNrZXItY2FyZCB7IGJveC1zaGFkb3c6MCAxcHggM3B4IHJnYmEoMCwwLDAsMC4wNik7IH0KW2RhdGEtdGhlbWU9ImxpZ2h0Il0gLnRyYWNrZXItY2FyZDpob3ZlciB7IGJveC1zaGFkb3c6MCA0cHggMTJweCByZ2JhKDAsMCwwLDAuMSk7IH0KKiB7IG1hcmdpbjowOyBwYWRkaW5nOjA7IGJveC1zaXppbmc6Ym9yZGVyLWJveDsgfQpib2R5IHsgZm9udC1mYW1pbHk6IHN5c3RlbS11aSwtYXBwbGUtc3lzdGVtLHNhbnMtc2VyaWY7IGJhY2tncm91bmQ6dmFyKC0tYmcpOyBjb2xvcjp2YXIoLS10ZXh0KTsgbGluZS1oZWlnaHQ6MS42OyB9Ci5jb250YWluZXIgeyBtYXgtd2lkdGg6MTQwMHB4OyBtYXJnaW46MCBhdXRvOyBwYWRkaW5nOjI0cHg7IH0KaGVhZGVyIHsgZGlzcGxheTpmbGV4OyBqdXN0aWZ5LWNvbnRlbnQ6c3BhY2UtYmV0d2VlbjsgYWxpZ24taXRlbXM6Y2VudGVyOyBtYXJnaW4tYm90dG9tOjI0cHg7IGZsZXgtd3JhcDp3cmFwOyBnYXA6MTJweDsgfQpoMSB7IGZvbnQtc2l6ZToxLjVyZW07IGZvbnQtd2VpZ2h0OjcwMDsgfQouaGVhZGVyLXJpZ2h0IHsgZGlzcGxheTpmbGV4OyBnYXA6MTJweDsgYWxpZ24taXRlbXM6Y2VudGVyOyB9Ci50aW1lc3RhbXAgeyBmb250LXNpemU6MC44cmVtOyBjb2xvcjp2YXIoLS10ZXh0LW11dGVkKTsgfQoudGhlbWUtdG9nZ2xlIHsgYmFja2dyb3VuZDp2YXIoLS1zdXJmYWNlMik7IGJvcmRlcjoxcHggc29saWQgdmFyKC0tYm9yZGVyKTsgY29sb3I6dmFyKC0tdGV4dCk7IHBhZGRpbmc6NnB4IDEycHg7IGJvcmRlci1yYWRpdXM6NnB4OyBjdXJzb3I6cG9pbnRlcjsgZm9udC1zaXplOjAuOHJlbTsgfQouc3VtbWFyeSB7IGRpc3BsYXk6Z3JpZDsgZ3JpZC10ZW1wbGF0ZS1jb2x1bW5zOnJlcGVhdChhdXRvLWZpdCxtaW5tYXgoMTYwcHgsMWZyKSk7IGdhcDoxNnB4OyBtYXJnaW4tYm90dG9tOjI0cHg7IH0KLnN1bW1hcnktY2FyZCB7IGJhY2tncm91bmQ6dmFyKC0tc3VyZmFjZSk7IGJvcmRlcjoxcHggc29saWQgdmFyKC0tYm9yZGVyKTsgYm9yZGVyLXJhZGl1czoxMnB4OyBwYWRkaW5nOjIwcHg7IHRleHQtYWxpZ246Y2VudGVyOyB0cmFuc2l0aW9uOnRyYW5zZm9ybSAwLjJzOyB9Ci5zdW1tYXJ5LWNhcmQ6aG92ZXIgeyB0cmFuc2Zvcm06dHJhbnNsYXRlWSgtMnB4KTsgfQouc3VtbWFyeS1jYXJkIC5jb3VudCB7IGZvbnQtc2l6ZToycmVtOyBmb250LXdlaWdodDo4MDA7IH0KLnN1bW1hcnktY2FyZCAubGFiZWwgeyBmb250LXNpemU6MC44cmVtOyBjb2xvcjp2YXIoLS10ZXh0LW11dGVkKTsgdGV4dC10cmFuc2Zvcm06dXBwZXJjYXNlOyBsZXR0ZXItc3BhY2luZzowLjA1ZW07IH0KLnN1bW1hcnktY2FyZC50b3RhbCAuY291bnQgeyBjb2xvcjp2YXIoLS1ibHVlKTsgfQouc3VtbWFyeS1jYXJkLmNvbXBsZXRlIC5jb3VudCB7IGNvbG9yOnZhcigtLWdyZWVuKTsgfQouc3VtbWFyeS1jYXJkLnByb2dyZXNzIC5jb3VudCB7IGNvbG9yOnZhcigtLXllbGxvdyk7IH0KLnN1bW1hcnktY2FyZC5hY3Rpb24gLmNvdW50IHsgY29sb3I6dmFyKC0tcmVkKTsgfQouZmlsdGVycyB7IGRpc3BsYXk6ZmxleDsgZ2FwOjEycHg7IG1hcmdpbi1ib3R0b206MjRweDsgZmxleC13cmFwOndyYXA7IH0KLmZpbHRlci1pbnB1dCwgLmZpbHRlci1zZWxlY3QgeyBiYWNrZ3JvdW5kOnZhcigtLXN1cmZhY2UpOyBib3JkZXI6MXB4IHNvbGlkIHZhcigtLWJvcmRlcik7IGNvbG9yOnZhcigtLXRleHQpOyBwYWRkaW5nOjhweCAxMnB4OyBib3JkZXItcmFkaXVzOjhweDsgZm9udC1zaXplOjAuODVyZW07IH0KLmZpbHRlci1pbnB1dCB7IGZsZXg6MTsgbWluLXdpZHRoOjIwMHB4OyB9Ci5maWx0ZXItc2VsZWN0IHsgbWluLXdpZHRoOjE0MHB4OyB9Ci5jYXJkLWxpc3QgeyBkaXNwbGF5OmZsZXg7IGZsZXgtZGlyZWN0aW9uOmNvbHVtbjsgZ2FwOjEycHg7IH0KLnRyYWNrZXItY2FyZCB7IGJhY2tncm91bmQ6dmFyKC0tc3VyZmFjZSk7IGJvcmRlcjoxcHggc29saWQgdmFyKC0tYm9yZGVyKTsgYm9yZGVyLXJhZGl1czoxMnB4OyBvdmVyZmxvdzpoaWRkZW47IHRyYW5zaXRpb246Ym94LXNoYWRvdyAwLjJzOyB9Ci50cmFja2VyLWNhcmQ6aG92ZXIgeyBib3gtc2hhZG93OjAgNHB4IDEycHggcmdiYSgwLDAsMCwwLjMpOyB9Ci5jYXJkLWhlYWRlciB7IGRpc3BsYXk6ZmxleDsgYWxpZ24taXRlbXM6Y2VudGVyOyBwYWRkaW5nOjE2cHggMjBweDsgY3Vyc29yOnBvaW50ZXI7IGdhcDoxMnB4OyBmbGV4LXdyYXA6d3JhcDsgfQouY2FyZC1zdGF0dXMtaW5kaWNhdG9yIHsgd2lkdGg6NHB4OyBoZWlnaHQ6NDBweDsgYm9yZGVyLXJhZGl1czoycHg7IGZsZXgtc2hyaW5rOjA7IH0KLmNhcmQtc3RhdHVzLWluZGljYXRvci5DT01QTEVURSB7IGJhY2tncm91bmQ6dmFyKC0tZ3JlZW4pOyB9Ci5jYXJkLXN0YXR1cy1pbmRpY2F0b3IuSU5fUFJPR1JFU1MgeyBiYWNrZ3JvdW5kOnZhcigtLXllbGxvdyk7IH0KLmNhcmQtc3RhdHVzLWluZGljYXRvci5BQ1RJT05fUkVRVUlSRUQgeyBiYWNrZ3JvdW5kOnZhcigtLXJlZCk7IH0KLmNhcmQtc3RhdHVzLWluZGljYXRvci5CTE9DS0VEIHsgYmFja2dyb3VuZDp2YXIoLS1ncmF5KTsgfQouY2FyZC1pZCB7IGZvbnQtd2VpZ2h0OjcwMDsgZm9udC1zaXplOjAuOXJlbTsgY29sb3I6dmFyKC0tYmx1ZSk7IHRleHQtZGVjb3JhdGlvbjpub25lOyB9Ci5jYXJkLWlkOmhvdmVyIHsgdGV4dC1kZWNvcmF0aW9uOnVuZGVybGluZTsgfQouY2FyZC10aXRsZSB7IGZsZXg6MTsgZm9udC1zaXplOjAuOXJlbTsgfQouY2FyZC10eXBlIHsgZm9udC1zaXplOjAuN3JlbTsgcGFkZGluZzoycHggOHB4OyBib3JkZXItcmFkaXVzOjRweDsgYmFja2dyb3VuZDp2YXIoLS1zdXJmYWNlMik7IGNvbG9yOnZhcigtLXRleHQtbXV0ZWQpOyB0ZXh0LXRyYW5zZm9ybTp1cHBlcmNhc2U7IH0KLmNhcmQtc3RhdHVzLWJhZGdlIHsgZm9udC1zaXplOjAuNzVyZW07IHBhZGRpbmc6NHB4IDEwcHg7IGJvcmRlci1yYWRpdXM6NnB4OyBmb250LXdlaWdodDo2MDA7IH0KLmNhcmQtc3RhdHVzLWJhZGdlLkNPTVBMRVRFIHsgYmFja2dyb3VuZDp2YXIoLS1ncmVlbi1iZyk7IGNvbG9yOiNmZmY7IH0KLmNhcmQtc3RhdHVzLWJhZGdlLklOX1BST0dSRVNTIHsgYmFja2dyb3VuZDp2YXIoLS15ZWxsb3ctYmcpOyBjb2xvcjojZmZmOyB9Ci5jYXJkLXN0YXR1cy1iYWRnZS5BQ1RJT05fUkVRVUlSRUQgeyBiYWNrZ3JvdW5kOnZhcigtLXJlZC1iZyk7IGNvbG9yOiNmZmY7IH0KLmNhcmQtc3RhdHVzLWJhZGdlLkJMT0NLRUQgeyBiYWNrZ3JvdW5kOnZhcigtLXN1cmZhY2UyKTsgY29sb3I6dmFyKC0tZ3JheSk7IH0KLmV4cGFuZC1pY29uIHsgdHJhbnNpdGlvbjp0cmFuc2Zvcm0gMC4zczsgY29sb3I6dmFyKC0tdGV4dC1tdXRlZCk7IH0KLnRyYWNrZXItY2FyZC5leHBhbmRlZCAuZXhwYW5kLWljb24geyB0cmFuc2Zvcm06cm90YXRlKDE4MGRlZyk7IH0KLmNhcmQtZGV0YWlscyB7IG1heC1oZWlnaHQ6MDsgb3ZlcmZsb3c6aGlkZGVuOyB0cmFuc2l0aW9uOm1heC1oZWlnaHQgMC40cyBlYXNlOyB9Ci50cmFja2VyLWNhcmQuZXhwYW5kZWQgLmNhcmQtZGV0YWlscyB7IG1heC1oZWlnaHQ6ODAwcHg7IH0KLmNhcmQtZGV0YWlscy1pbm5lciB7IHBhZGRpbmc6MCAyMHB4IDIwcHg7IGJvcmRlci10b3A6MXB4IHNvbGlkIHZhcigtLWJvcmRlcik7IG1hcmdpbi10b3A6MDsgcGFkZGluZy10b3A6MTZweDsgfQoucmVsZWFzZXMtZ3JpZCB7IGRpc3BsYXk6Z3JpZDsgZ2FwOjhweDsgbWFyZ2luLWJvdHRvbToxNnB4OyB9Ci5yZWxlYXNlLXJvdyB7IGRpc3BsYXk6ZmxleDsgYWxpZ24taXRlbXM6Y2VudGVyOyBnYXA6MTJweDsgcGFkZGluZzo4cHggMTJweDsgYmFja2dyb3VuZDp2YXIoLS1zdXJmYWNlMik7IGJvcmRlci1yYWRpdXM6OHB4OyBmb250LXNpemU6MC44NXJlbTsgfQoucmVsZWFzZS1uYW1lIHsgZm9udC13ZWlnaHQ6NjAwOyBtaW4td2lkdGg6MTgwcHg7IH0KLnJlbGVhc2Utc3RhdHVzIHsgZGlzcGxheTpmbGV4OyBhbGlnbi1pdGVtczpjZW50ZXI7IGdhcDo2cHg7IH0KLnJlbGVhc2UtZG90IHsgd2lkdGg6OHB4OyBoZWlnaHQ6OHB4OyBib3JkZXItcmFkaXVzOjUwJTsgfQoucmVsZWFzZS1kb3QuRE9ORSB7IGJhY2tncm91bmQ6dmFyKC0tZ3JlZW4pOyB9Ci5yZWxlYXNlLWRvdC5ORUVEU19WQUxJREFUSU9OIHsgYmFja2dyb3VuZDp2YXIoLS1ibHVlKTsgfQoucmVsZWFzZS1kb3QuUEVORElOR19SRVZJRVcgeyBiYWNrZ3JvdW5kOnZhcigtLXllbGxvdyk7IH0KLnJlbGVhc2UtZG90LklOX0RFVkVMT1BNRU5UIHsgYmFja2dyb3VuZDp2YXIoLS1vcmFuZ2UpOyB9Ci5yZWxlYXNlLWRvdC5NSVNTSU5HX0NQIHsgYmFja2dyb3VuZDp2YXIoLS1yZWQpOyB9Ci5yZWxlYXNlLWNwIHsgY29sb3I6dmFyKC0tdGV4dC1tdXRlZCk7IGZvbnQtc2l6ZTowLjhyZW07IH0KLmFubm90YXRpb25zIHsgbWFyZ2luLWJvdHRvbToxNnB4OyB9Ci5hbm5vdGF0aW9uIHsgZGlzcGxheTpmbGV4OyBhbGlnbi1pdGVtczpzdGFydDsgZ2FwOjhweDsgcGFkZGluZzo4cHggMTJweDsgYmFja2dyb3VuZDp2YXIoLS1zdXJmYWNlMik7IGJvcmRlci1yYWRpdXM6NnB4OyBmb250LXNpemU6MC44cmVtOyBtYXJnaW4tYm90dG9tOjZweDsgYm9yZGVyLWxlZnQ6M3B4IHNvbGlkIHZhcigtLXJlZCk7IH0KLmFubm90YXRpb24taWNvbiB7IGZsZXgtc2hyaW5rOjA7IH0KLmNhcmQtYWN0aW9ucyB7IGRpc3BsYXk6ZmxleDsgZ2FwOjhweDsgZmxleC13cmFwOndyYXA7IH0KLm5vdGlmeS1idG4geyBkaXNwbGF5OmlubGluZS1mbGV4OyBhbGlnbi1pdGVtczpjZW50ZXI7IGdhcDo0cHg7IHBhZGRpbmc6NnB4IDEycHg7IGJhY2tncm91bmQ6IzYyNjRhNzsgY29sb3I6d2hpdGU7IGJvcmRlci1yYWRpdXM6NnB4OyBmb250LXNpemU6MC43NXJlbTsgdGV4dC1kZWNvcmF0aW9uOm5vbmU7IGZvbnQtd2VpZ2h0OjUwMDsgdHJhbnNpdGlvbjpvcGFjaXR5IDAuMnM7IH0KLm5vdGlmeS1idG46aG92ZXIgeyBvcGFjaXR5OjAuODU7IH0KLm5vdGlmeS1wYW5lbCB7IGRpc3BsYXk6bm9uZTsgYmFja2dyb3VuZDp2YXIoLS1zdXJmYWNlKTsgYm9yZGVyOjFweCBzb2xpZCB2YXIoLS1ib3JkZXIpOyBib3JkZXItcmFkaXVzOjEycHg7IHBhZGRpbmc6MjBweDsgbWFyZ2luLWJvdHRvbToyNHB4OyB9Ci5ub3RpZnktcGFuZWwudmlzaWJsZSB7IGRpc3BsYXk6YmxvY2s7IH0KLm5vdGlmeS1wYW5lbCBoMiB7IGZvbnQtc2l6ZToxLjFyZW07IG1hcmdpbi1ib3R0b206MTZweDsgfQouYXNzaWduZWUtZ3JvdXAgeyBiYWNrZ3JvdW5kOnZhcigtLXN1cmZhY2UyKTsgYm9yZGVyLXJhZGl1czo4cHg7IHBhZGRpbmc6MTZweDsgbWFyZ2luLWJvdHRvbToxMnB4OyB9Ci5hc3NpZ25lZS1ncm91cC1oZWFkZXIgeyBkaXNwbGF5OmZsZXg7IGp1c3RpZnktY29udGVudDpzcGFjZS1iZXR3ZWVuOyBhbGlnbi1pdGVtczpjZW50ZXI7IG1hcmdpbi1ib3R0b206OHB4OyB9Ci5hc3NpZ25lZS1ncm91cC1oZWFkZXIgc3Ryb25nIHsgZm9udC1zaXplOjAuOTVyZW07IH0KLmFzc2lnbmVlLWNhcmRzLXN1bW1hcnkgeyBmb250LXNpemU6MC44cmVtOyBjb2xvcjp2YXIoLS10ZXh0LW11dGVkKTsgbWFyZ2luLWJvdHRvbToxMnB4OyB9Ci5hc3NpZ25lZS1jYXJkcy1zdW1tYXJ5IHNwYW4geyBkaXNwbGF5OmlubGluZS1ibG9jazsgbWFyZ2luLXJpZ2h0OjhweDsgcGFkZGluZzoycHggNnB4OyBib3JkZXItcmFkaXVzOjRweDsgYmFja2dyb3VuZDp2YXIoLS1zdXJmYWNlKTsgfQouc2VuZC1zdGF0dXMtYnRuIHsgZGlzcGxheTppbmxpbmUtZmxleDsgYWxpZ24taXRlbXM6Y2VudGVyOyBnYXA6NnB4OyBwYWRkaW5nOjhweCAxNnB4OyBiYWNrZ3JvdW5kOiM2MjY0YTc7IGNvbG9yOndoaXRlOyBib3JkZXI6bm9uZTsgYm9yZGVyLXJhZGl1czo4cHg7IGZvbnQtc2l6ZTowLjg1cmVtOyBjdXJzb3I6cG9pbnRlcjsgdGV4dC1kZWNvcmF0aW9uOm5vbmU7IGZvbnQtd2VpZ2h0OjYwMDsgdHJhbnNpdGlvbjpvcGFjaXR5IDAuMnM7IH0KLnNlbmQtc3RhdHVzLWJ0bjpob3ZlciB7IG9wYWNpdHk6MC44NTsgfQouc2VuZC1zdGF0dXMtYnRuLmhlYWRlci1idG4geyBiYWNrZ3JvdW5kOiM2MjY0YTc7IHBhZGRpbmc6OHB4IDE0cHg7IGZvbnQtc2l6ZTowLjhyZW07IH0KLnNlbmQtc3RhdHVzLWJ0bjpkaXNhYmxlZCwgLnNlbmQtc3RhdHVzLWJ0bi5kaXNhYmxlZCB7IG9wYWNpdHk6MC40OyBwb2ludGVyLWV2ZW50czpub25lOyB9Ci5jbG9zZS1wYW5lbC1idG4geyBiYWNrZ3JvdW5kOnZhcigtLXN1cmZhY2UyKTsgYm9yZGVyOjFweCBzb2xpZCB2YXIoLS1ib3JkZXIpOyBjb2xvcjp2YXIoLS10ZXh0KTsgcGFkZGluZzo2cHggMTJweDsgYm9yZGVyLXJhZGl1czo2cHg7IGN1cnNvcjpwb2ludGVyOyBmb250LXNpemU6MC44cmVtOyB9Ci5iYXRjaC1iYXIgeyBkaXNwbGF5OmZsZXg7IGFsaWduLWl0ZW1zOmNlbnRlcjsgZ2FwOjEycHg7IG1hcmdpbi1ib3R0b206MTZweDsgZmxleC13cmFwOndyYXA7IH0KLmJhdGNoLWJhciBsYWJlbCB7IGRpc3BsYXk6ZmxleDsgYWxpZ24taXRlbXM6Y2VudGVyOyBnYXA6NnB4OyBmb250LXNpemU6MC44NXJlbTsgY3Vyc29yOnBvaW50ZXI7IH0KLmJhdGNoLWJhciAuc2VsZWN0ZWQtY291bnQgeyBmb250LXNpemU6MC44cmVtOyBjb2xvcjp2YXIoLS10ZXh0LW11dGVkKTsgfQouY2FyZC1jaGVja2JveCB7IHdpZHRoOjE4cHg7IGhlaWdodDoxOHB4OyBhY2NlbnQtY29sb3I6dmFyKC0tYmx1ZSk7IGN1cnNvcjpwb2ludGVyOyBmbGV4LXNocmluazowOyB9Ci5jYXJkLWhlYWRlci1ub3RpZnkgeyBkaXNwbGF5OmlubGluZS1mbGV4OyBhbGlnbi1pdGVtczpjZW50ZXI7IGdhcDo0cHg7IHBhZGRpbmc6NHB4IDEwcHg7IGJhY2tncm91bmQ6IzYyNjRhNzsgY29sb3I6d2hpdGU7IGJvcmRlci1yYWRpdXM6NnB4OyBmb250LXNpemU6MC43cmVtOyB0ZXh0LWRlY29yYXRpb246bm9uZTsgZm9udC13ZWlnaHQ6NTAwOyB0cmFuc2l0aW9uOm9wYWNpdHkgMC4yczsgbWFyZ2luLWxlZnQ6YXV0bzsgfQouY2FyZC1oZWFkZXItbm90aWZ5OmhvdmVyIHsgb3BhY2l0eTowLjg1OyB9Ci5yZWxlYXNlLWNwIGEgeyBjb2xvcjojN2RkM2ZjOyB0ZXh0LWRlY29yYXRpb246bm9uZTsgZm9udC13ZWlnaHQ6NjAwOyB9Ci5yZWxlYXNlLWNwIGE6aG92ZXIgeyB0ZXh0LWRlY29yYXRpb246dW5kZXJsaW5lOyB9Ci5hbm5vdGF0aW9uIGEgeyBjb2xvcjojN2RkM2ZjOyB0ZXh0LWRlY29yYXRpb246bm9uZTsgZm9udC13ZWlnaHQ6NjAwOyB9Ci5hbm5vdGF0aW9uIGE6aG92ZXIgeyB0ZXh0LWRlY29yYXRpb246dW5kZXJsaW5lOyB9Ci5sZWdlbmQgeyBkaXNwbGF5OmZsZXg7IGdhcDoxNnB4OyBmbGV4LXdyYXA6d3JhcDsgbWFyZ2luLWJvdHRvbToyNHB4OyBwYWRkaW5nOjEycHggMTZweDsgYmFja2dyb3VuZDp2YXIoLS1zdXJmYWNlKTsgYm9yZGVyOjFweCBzb2xpZCB2YXIoLS1ib3JkZXIpOyBib3JkZXItcmFkaXVzOjhweDsgfQoubGVnZW5kLWl0ZW0geyBkaXNwbGF5OmZsZXg7IGFsaWduLWl0ZW1zOmNlbnRlcjsgZ2FwOjZweDsgZm9udC1zaXplOjAuNzVyZW07IGNvbG9yOnZhcigtLXRleHQtbXV0ZWQpOyB9Ci5sZWdlbmQtZG90IHsgd2lkdGg6MTBweDsgaGVpZ2h0OjEwcHg7IGJvcmRlci1yYWRpdXM6NTAlOyBmbGV4LXNocmluazowOyB9Ci5sZWdlbmQtZG90LmdyZWVuIHsgYmFja2dyb3VuZDp2YXIoLS1ncmVlbik7IH0KLmxlZ2VuZC1kb3QuYmx1ZSB7IGJhY2tncm91bmQ6dmFyKC0tYmx1ZSk7IH0KLmxlZ2VuZC1kb3QueWVsbG93IHsgYmFja2dyb3VuZDp2YXIoLS15ZWxsb3cpOyB9Ci5sZWdlbmQtZG90Lm9yYW5nZSB7IGJhY2tncm91bmQ6dmFyKC0tb3JhbmdlKTsgfQoubGVnZW5kLWRvdC5yZWQgeyBiYWNrZ3JvdW5kOnZhcigtLXJlZCk7IH0KLmxlZ2VuZC1kb3QuZ3JheSB7IGJhY2tncm91bmQ6dmFyKC0tZ3JheSk7IH0KQG1lZGlhIHByaW50IHsKICBib2R5IHsgYmFja2dyb3VuZDp3aGl0ZTsgY29sb3I6YmxhY2s7IH0KICAuZmlsdGVycywgLnRoZW1lLXRvZ2dsZSwgLm5vdGlmeS1idG4sIC5zZW5kLXN0YXR1cy1idG4sIC5ub3RpZnktcGFuZWwgeyBkaXNwbGF5Om5vbmU7IH0KICAudHJhY2tlci1jYXJkIHsgYnJlYWstaW5zaWRlOmF2b2lkOyB9CiAgLmNhcmQtZGV0YWlscyB7IG1heC1oZWlnaHQ6bm9uZSAhaW1wb3J0YW50OyB9Cn0KPC9zdHlsZT4KPC9oZWFkPgo8Ym9keT4KPGRpdiBjbGFzcz0iY29udGFpbmVyIj4KICA8aGVhZGVyPgogICAgPGgxPk1GRSBUQ00gVHJhY2tlciBEYXNoYm9hcmQ8L2gxPgogICAgPGRpdiBjbGFzcz0iaGVhZGVyLXJpZ2h0Ij4KICAgICAgPHNwYW4gY2xhc3M9InRpbWVzdGFtcCIgaWQ9InRpbWVzdGFtcCI+PC9zcGFuPgogICAgICA8YnV0dG9uIGNsYXNzPSJzZW5kLXN0YXR1cy1idG4gaGVhZGVyLWJ0biIgb25jbGljaz0idG9nZ2xlTm90aWZ5UGFuZWwoKSI+8J+TqCBTZW5kIENvbXBsZXRlIFN0YXR1czwvYnV0dG9uPgogICAgICA8YnV0dG9uIGNsYXNzPSJ0aGVtZS10b2dnbGUiIG9uY2xpY2s9InRvZ2dsZVRoZW1lKCkiPlRvZ2dsZSBUaGVtZTwvYnV0dG9uPgogICAgPC9kaXY+CiAgPC9oZWFkZXI+CgogIDxkaXYgY2xhc3M9Im5vdGlmeS1wYW5lbCIgaWQ9Im5vdGlmeVBhbmVsIj4KICAgIDxkaXYgc3R5bGU9ImRpc3BsYXk6ZmxleDtqdXN0aWZ5LWNvbnRlbnQ6c3BhY2UtYmV0d2VlbjthbGlnbi1pdGVtczpjZW50ZXI7bWFyZ2luLWJvdHRvbToxNnB4OyI+CiAgICAgIDxoMj7wn5OoIE5vdGlmeSBEZXZlbG9wZXJzIOKAlCBHcm91cGVkIGJ5IEFzc2lnbmVlPC9oMj4KICAgICAgPGJ1dHRvbiBjbGFzcz0iY2xvc2UtcGFuZWwtYnRuIiBvbmNsaWNrPSJ0b2dnbGVOb3RpZnlQYW5lbCgpIj7inJUgQ2xvc2U8L2J1dHRvbj4KICAgIDwvZGl2PgogICAgPGRpdiBpZD0iYXNzaWduZWVHcm91cHMiPjwvZGl2PgogIDwvZGl2PgoKICA8ZGl2IGNsYXNzPSJzdW1tYXJ5IiBpZD0ic3VtbWFyeSI+PC9kaXY+CgogIDxkaXYgY2xhc3M9ImxlZ2VuZCI+CiAgICA8ZGl2IGNsYXNzPSJsZWdlbmQtaXRlbSI+PHNwYW4gY2xhc3M9ImxlZ2VuZC1kb3QgZ3JlZW4iPjwvc3Bhbj5Eb25lIC8gQ29tcGxldGU8L2Rpdj4KICAgIDxkaXYgY2xhc3M9ImxlZ2VuZC1pdGVtIj48c3BhbiBjbGFzcz0ibGVnZW5kLWRvdCBibHVlIj48L3NwYW4+TmVlZHMgVmFsaWRhdGlvbjwvZGl2PgogICAgPGRpdiBjbGFzcz0ibGVnZW5kLWl0ZW0iPjxzcGFuIGNsYXNzPSJsZWdlbmQtZG90IHllbGxvdyI+PC9zcGFuPlBlbmRpbmcgUmV2aWV3IC8gSW4gUHJvZ3Jlc3M8L2Rpdj4KICAgIDxkaXYgY2xhc3M9ImxlZ2VuZC1pdGVtIj48c3BhbiBjbGFzcz0ibGVnZW5kLWRvdCBvcmFuZ2UiPjwvc3Bhbj5JbiBEZXZlbG9wbWVudDwvZGl2PgogICAgPGRpdiBjbGFzcz0ibGVnZW5kLWl0ZW0iPjxzcGFuIGNsYXNzPSJsZWdlbmQtZG90IHJlZCI+PC9zcGFuPk1pc3NpbmcgQ1AgLyBBY3Rpb24gUmVxdWlyZWQ8L2Rpdj4KICAgIDxkaXYgY2xhc3M9ImxlZ2VuZC1pdGVtIj48c3BhbiBjbGFzcz0ibGVnZW5kLWRvdCBncmF5Ij48L3NwYW4+QmxvY2tlZDwvZGl2PgogIDwvZGl2PgoKICA8ZGl2IGNsYXNzPSJmaWx0ZXJzIj4KICAgIDxpbnB1dCB0eXBlPSJ0ZXh0IiBjbGFzcz0iZmlsdGVyLWlucHV0IiBpZD0ic2VhcmNoIiBwbGFjZWhvbGRlcj0iU2VhcmNoIGNhcmRzLi4uIiBvbmlucHV0PSJmaWx0ZXJDYXJkcygpIj4KICAgIDxzZWxlY3QgY2xhc3M9ImZpbHRlci1zZWxlY3QiIGlkPSJzdGF0dXNGaWx0ZXIiIG9uY2hhbmdlPSJmaWx0ZXJDYXJkcygpIj4KICAgICAgPG9wdGlvbiB2YWx1ZT0iIj5BbGwgU3RhdHVzPC9vcHRpb24+CiAgICAgIDxvcHRpb24gdmFsdWU9IkNPTVBMRVRFIj5Db21wbGV0ZTwvb3B0aW9uPgogICAgICA8b3B0aW9uIHZhbHVlPSJJTl9QUk9HUkVTUyI+SW4gUHJvZ3Jlc3M8L29wdGlvbj4KICAgICAgPG9wdGlvbiB2YWx1ZT0iQUNUSU9OX1JFUVVJUkVEIj5BY3Rpb24gUmVxdWlyZWQ8L29wdGlvbj4KICAgICAgPG9wdGlvbiB2YWx1ZT0iQkxPQ0tFRCI+QmxvY2tlZDwvb3B0aW9uPgogICAgPC9zZWxlY3Q+CiAgICA8c2VsZWN0IGNsYXNzPSJmaWx0ZXItc2VsZWN0IiBpZD0icmVsZWFzZUZpbHRlciIgb25jaGFuZ2U9ImZpbHRlckNhcmRzKCkiPgogICAgICA8b3B0aW9uIHZhbHVlPSIiPkFsbCBSZWxlYXNlczwvb3B0aW9uPgogICAgPC9zZWxlY3Q+CiAgICA8c2VsZWN0IGNsYXNzPSJmaWx0ZXItc2VsZWN0IiBpZD0iYXNzaWduZWVGaWx0ZXIiIG9uY2hhbmdlPSJmaWx0ZXJDYXJkcygpIj4KICAgICAgPG9wdGlvbiB2YWx1ZT0iIj5BbGwgQXNzaWduZWVzPC9vcHRpb24+CiAgICA8L3NlbGVjdD4KICA8L2Rpdj4KCiAgPGRpdiBjbGFzcz0iYmF0Y2gtYmFyIj4KICAgIDxsYWJlbD48aW5wdXQgdHlwZT0iY2hlY2tib3giIGNsYXNzPSJjYXJkLWNoZWNrYm94IiBpZD0ic2VsZWN0QWxsIiBvbmNoYW5nZT0idG9nZ2xlU2VsZWN0QWxsKCkiPiBTZWxlY3QgQWxsPC9sYWJlbD4KICAgIDxzcGFuIGNsYXNzPSJzZWxlY3RlZC1jb3VudCIgaWQ9InNlbGVjdGVkQ291bnQiPjAgc2VsZWN0ZWQ8L3NwYW4+CiAgICA8YnV0dG9uIGNsYXNzPSJzZW5kLXN0YXR1cy1idG4iIGlkPSJub3RpZnlTZWxlY3RlZEJ0biIgb25jbGljaz0ibm90aWZ5U2VsZWN0ZWQoKSIgZGlzYWJsZWQ+8J+TqCBOb3RpZnkgU2VsZWN0ZWQ8L2J1dHRvbj4KICA8L2Rpdj4KCiAgPGRpdiBjbGFzcz0iY2FyZC1saXN0IiBpZD0iY2FyZExpc3QiPjwvZGl2Pgo8L2Rpdj4KCjxzY3JpcHQgaWQ9ImRhc2hib2FyZC1kYXRhIiB0eXBlPSJhcHBsaWNhdGlvbi9qc29uIj4KewogICJnZW5lcmF0ZWQiOiAiMjAyNi0wNi0xMVQwODowMDowMFoiLAogICJwcm9qZWN0IjogIk1GRV9UQ00iLAogICJwb2xhcmlvbkJhc2VVcmwiOiAiaHR0cHM6Ly9teXBvbGFyaW9uLmluZHVzdHJ5c29mdHdhcmUuYXV0b21hdGlvbi5zaWVtZW5zLmNvbS9wb2xhcmlvbi9yZWRpcmVjdC9wcm9qZWN0L01GRV9UQ00vd29ya2l0ZW0/aWQ9IiwKICAic3VtbWFyeSI6IHsKICAgICJ0b3RhbCI6IDMsCiAgICAiY29tcGxldGUiOiAwLAogICAgImluUHJvZ3Jlc3MiOiAyLAogICAgImFjdGlvblJlcXVpcmVkIjogMQogIH0sCiAgImNhcmRzIjogWwogICAgewogICAgICAiaWQiOiAiVENNLTQ3MzU3MSIsCiAgICAgICJ0aXRsZSI6ICJFUk06MjYwNjogRGVmZWN0cyBvYnNlcnZlZCBkdXJpbmcgVEMgMjYwNiBJbnN0YWxsYXRpb24gdGVzdGluZyIsCiAgICAgICJ0eXBlIjogImRlZmVjdCIsCiAgICAgICJzdGF0dXMiOiAiSU5fUFJPR1JFU1MiLAogICAgICAiYXNzaWduZWVzIjogWwogICAgICAgIHsKICAgICAgICAgICJuYW1lIjogIk9ta2FyIFNhd2FudCIsCiAgICAgICAgICAiZW1haWwiOiAib21rYXIuc2F3YW50LmV4dEBzaWVtZW5zLmNvbSIKICAgICAgICB9CiAgICAgIF0sCiAgICAgICJyZWxlYXNlcyI6IFsKICAgICAgICB7CiAgICAgICAgICAibmFtZSI6ICJUZWFtY2VudGVyIDI2MTIiLAogICAgICAgICAgInN0YXR1cyI6ICJORUVEU19WQUxJREFUSU9OIiwKICAgICAgICAgICJjcElkIjogIlBMTTEwNzkwMDQiLAogICAgICAgICAgImNwRG1zSWQiOiBudWxsLAogICAgICAgICAgImNwVXJsIjogbnVsbCwKICAgICAgICAgICJjcFN0YXRlIjogImNsb3NlZCIsCiAgICAgICAgICAiY3BUeXBlIjogIk5vcm1hbCIsCiAgICAgICAgICAidmFsaWRhdGVkIjogZmFsc2UKICAgICAgICB9LAogICAgICAgIHsKICAgICAgICAgICJuYW1lIjogIlRlYW1jZW50ZXIgMjYwNi4yNjA3IiwKICAgICAgICAgICJzdGF0dXMiOiAiTkVFRFNfVkFMSURBVElPTiIsCiAgICAgICAgICAiY3BJZCI6ICJQTE0xMDc5MDIxIiwKICAgICAgICAgICJjcERtc0lkIjogbnVsbCwKICAgICAgICAgICJjcFVybCI6IG51bGwsCiAgICAgICAgICAiY3BTdGF0ZSI6ICJjbG9zZWQiLAogICAgICAgICAgImNwVHlwZSI6ICJOb3JtYWwiLAogICAgICAgICAgInZhbGlkYXRlZCI6IGZhbHNlCiAgICAgICAgfQogICAgICBdLAogICAgICAiYW5ub3RhdGlvbnMiOiBbXQogICAgfSwKICAgIHsKICAgICAgImlkIjogIlRDTS00NzAzODciLAogICAgICAidGl0bGUiOiAiTmV3Q08gLSBVbmFibGUgdG8gT3BlbiBCT00gQWxpZ25tZW50IGZvciBNQ04gQXNzb2NpYXRlZCB3aXRoIFdvcmsgUGFja2FnZSBIYXZpbmcgUmVzb3VyY2UgUG9vbCBQYXJ0aWNpcGFudHMiLAogICAgICAidHlwZSI6ICJkZWZlY3QiLAogICAgICAic3RhdHVzIjogIkFDVElPTl9SRVFVSVJFRCIsCiAgICAgICJhc3NpZ25lZXMiOiBbCiAgICAgICAgewogICAgICAgICAgIm5hbWUiOiAiT20gU2hhbmthciIsCiAgICAgICAgICAiZW1haWwiOiAib20uc2hhbmthci5leHRAc2llbWVucy5jb20iCiAgICAgICAgfQogICAgICBdLAogICAgICAicmVsZWFzZXMiOiBbCiAgICAgICAgewogICAgICAgICAgIm5hbWUiOiAiVGVhbWNlbnRlciAyNTA2LjAwMDQuMDEwMSAoTmV3Y28gT25seSkiLAogICAgICAgICAgInN0YXR1cyI6ICJORUVEU19WQUxJREFUSU9OIiwKICAgICAgICAgICJjcElkIjogIlBMTTEwNjU5MzciLAogICAgICAgICAgImNwRG1zSWQiOiAiMTUxMTY1NSIsCiAgICAgICAgICAiY3BVcmwiOiAiaHR0cDovL2Rtcy5uZXQucGxtLmVkcy5jb20vZG1zL2NwL3ZpZXdDaGFuZ2VQYWNrYWdlLmpzZj9jcElkPTE1MTE2NTUmcHJOYW1lPVBMTSIsCiAgICAgICAgICAiY3BTdGF0ZSI6ICJjbG9zZWQiLAogICAgICAgICAgImNwVHlwZSI6ICJOb3JtYWwiLAogICAgICAgICAgInZhbGlkYXRlZCI6IGZhbHNlCiAgICAgICAgfSwKICAgICAgICB7CiAgICAgICAgICAibmFtZSI6ICJUZWFtY2VudGVyIDI1MDYuMDAwNC4wMTAzIChOZXdjbyBPbmx5KSIsCiAgICAgICAgICAic3RhdHVzIjogIk1JU1NJTkdfQ1AiLAogICAgICAgICAgImNwSWQiOiBudWxsLAogICAgICAgICAgImNwRG1zSWQiOiBudWxsLAogICAgICAgICAgImNwVXJsIjogbnVsbCwKICAgICAgICAgICJjcFN0YXRlIjogbnVsbCwKICAgICAgICAgICJjcFR5cGUiOiBudWxsLAogICAgICAgICAgInZhbGlkYXRlZCI6IGZhbHNlCiAgICAgICAgfSwKICAgICAgICB7CiAgICAgICAgICAibmFtZSI6ICJUZWFtY2VudGVyIDI1MDYuMDAxMCIsCiAgICAgICAgICAic3RhdHVzIjogIk1JU1NJTkdfQ1AiLAogICAgICAgICAgImNwSWQiOiBudWxsLAogICAgICAgICAgImNwRG1zSWQiOiBudWxsLAogICAgICAgICAgImNwVXJsIjogbnVsbCwKICAgICAgICAgICJjcFN0YXRlIjogbnVsbCwKICAgICAgICAgICJjcFR5cGUiOiBudWxsLAogICAgICAgICAgInZhbGlkYXRlZCI6IGZhbHNlCiAgICAgICAgfQogICAgICBdLAogICAgICAiYW5ub3RhdGlvbnMiOiBbCiAgICAgICAgIk5vIENQIGZvdW5kIHRhcmdldGluZyBUZWFtY2VudGVyIDI1MDYuMDAwNC4wMTAzIChOZXdjbyBPbmx5KSIsCiAgICAgICAgIk5vIENQIGZvdW5kIHRhcmdldGluZyBUZWFtY2VudGVyIDI1MDYuMDAxMCIKICAgICAgXQogICAgfSwKICAgIHsKICAgICAgImlkIjogIlRDTS00NzA5NDIiLAogICAgICAidGl0bGUiOiAiT3BlbmluZyBhIFdvcmtwYWNrYWdlIGluIGF3YyAyNTEyIGFuZCBkb2luZyBhIGJvbSBhbGxpZ25tZW50IGdpdmVzIGFuIGVycm9yIiwKICAgICAgInR5cGUiOiAiZGVmZWN0IiwKICAgICAgInN0YXR1cyI6ICJJTl9QUk9HUkVTUyIsCiAgICAgICJhc3NpZ25lZXMiOiBbCiAgICAgICAgewogICAgICAgICAgIm5hbWUiOiAiT20gU2hhbmthciIsCiAgICAgICAgICAiZW1haWwiOiAib20uc2hhbmthci5leHRAc2llbWVucy5jb20iCiAgICAgICAgfSwKICAgICAgICB7CiAgICAgICAgICAibmFtZSI6ICJQcmFzaGFudCBCaGFtYmhhbmkiLAogICAgICAgICAgImVtYWlsIjogInByYXNoYW50LmJoYW1iaGFuaS5leHRAc2llbWVucy5jb20iCiAgICAgICAgfQogICAgICBdLAogICAgICAicmVsZWFzZXMiOiBbCiAgICAgICAgewogICAgICAgICAgIm5hbWUiOiAiVGVhbWNlbnRlciAyNjA2IiwKICAgICAgICAgICJzdGF0dXMiOiAiTkVFRFNfVkFMSURBVElPTiIsCiAgICAgICAgICAiY3BJZCI6ICJQTE0xMDY5NTY4IiwKICAgICAgICAgICJjcERtc0lkIjogIjE1MTUzNzQiLAogICAgICAgICAgImNwVXJsIjogImh0dHA6Ly9kbXMubmV0LnBsbS5lZHMuY29tL2Rtcy9jcC92aWV3Q2hhbmdlUGFja2FnZS5qc2Y/Y3BJZD0xNTE1Mzc0JnByTmFtZT1QTE0iLAogICAgICAgICAgImNwU3RhdGUiOiAiY2xvc2VkIiwKICAgICAgICAgICJjcFR5cGUiOiAiTm9ybWFsIiwKICAgICAgICAgICJ2YWxpZGF0ZWQiOiBmYWxzZQogICAgICAgIH0sCiAgICAgICAgewogICAgICAgICAgIm5hbWUiOiAiVGVhbWNlbnRlciAyNTEyLjI2MDciLAogICAgICAgICAgInN0YXR1cyI6ICJORUVEU19WQUxJREFUSU9OIiwKICAgICAgICAgICJjcElkIjogIlBMTTEwNjgzNDkiLAogICAgICAgICAgImNwRG1zSWQiOiAiMTUxNDEyMSIsCiAgICAgICAgICAiY3BVcmwiOiAiaHR0cDovL2Rtcy5uZXQucGxtLmVkcy5jb20vZG1zL2NwL3ZpZXdDaGFuZ2VQYWNrYWdlLmpzZj9jcElkPTE1MTQxMjEmcHJOYW1lPVBMTSIsCiAgICAgICAgICAiY3BTdGF0ZSI6ICJjbG9zZWQiLAogICAgICAgICAgImNwVHlwZSI6ICJOb3JtYWwiLAogICAgICAgICAgInZhbGlkYXRlZCI6IGZhbHNlCiAgICAgICAgfQogICAgICBdLAogICAgICAiYW5ub3RhdGlvbnMiOiBbXQogICAgfQogIF0KfQo8L3NjcmlwdD4KCjxzY3JpcHQ+CmNvbnN0IGRhdGEgPSBKU09OLnBhcnNlKGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdkYXNoYm9hcmQtZGF0YScpLnRleHRDb250ZW50KTsKY29uc3QgRE1TX0NQX1VSTCA9ICdodHRwOi8vZG1zLm5ldC5wbG0uZWRzLmNvbS9kbXMvY3Avdmlld0NoYW5nZVBhY2thZ2UuanNmP2NwSWQ9Q1BfSUQmcHJOYW1lPVBMTSc7CmNvbnN0IFBPTEFSSU9OX1VSTCA9IGRhdGEucG9sYXJpb25CYXNlVXJsIHx8ICdodHRwczovL215cG9sYXJpb24uaW5kdXN0cnlzb2Z0d2FyZS5hdXRvbWF0aW9uLnNpZW1lbnMuY29tL3BvbGFyaW9uL3JlZGlyZWN0L3Byb2plY3QvTUZFX1RDTS93b3JraXRlbT9pZD0nOwoKY29uc3QgU1RBVFVTX0VNT0pJID0gewogICdET05FJzogJ/Cfn6InLCAnTkVFRFNfVkFMSURBVElPTic6ICfwn5S1JywgJ1BFTkRJTkdfUkVWSUVXJzogJ/Cfn6EnLAogICdJTl9ERVZFTE9QTUVOVCc6ICfwn5+gJywgJ01JU1NJTkdfQ1AnOiAn8J+UtCcsICdDT01QTEVURSc6ICfwn5+iJywKICAnSU5fUFJPR1JFU1MnOiAn8J+foScsICdBQ1RJT05fUkVRVUlSRUQnOiAn8J+UtCcsICdCTE9DS0VEJzogJ+KaqycsICdVTktOT1dOJzogJ+KaqicKfTsKCmZ1bmN0aW9uIGNwVXJsKHJlbGVhc2UpIHsKICBpZiAocmVsZWFzZS5jcFVybCkgcmV0dXJuIHJlbGVhc2UuY3BVcmw7CiAgY29uc3QgaWQgPSByZWxlYXNlLmNwRG1zSWQgfHwgKHJlbGVhc2UuY3BJZCA/IHJlbGVhc2UuY3BJZC5yZXBsYWNlKC9eUExNLywgJycpIDogJycpOwogIHJldHVybiBETVNfQ1BfVVJMLnJlcGxhY2UoJ0NQX0lEJywgaWQpOwp9CgpmdW5jdGlvbiBjcFVybEJ5SWQoY3BEbXNJZCwgY3BJZCkgewogIGNvbnN0IGlkID0gY3BEbXNJZCB8fCAoY3BJZCA/IGNwSWQucmVwbGFjZSgvXlBMTS8sICcnKSA6ICcnKTsKICByZXR1cm4gRE1TX0NQX1VSTC5yZXBsYWNlKCdDUF9JRCcsIGlkKTsKfQoKZnVuY3Rpb24gZ2V0Q3BSZWxlYXNlKGNwSWQpIHsKICBmb3IgKGNvbnN0IGNhcmQgb2YgZGF0YS5jYXJkcykgewogICAgZm9yIChjb25zdCByIG9mIGNhcmQucmVsZWFzZXMpIHsKICAgICAgaWYgKHIuY3BJZCA9PT0gY3BJZCkgcmV0dXJuIHI7CiAgICB9CiAgfQogIHJldHVybiBudWxsOwp9CgpmdW5jdGlvbiBsaW5raWZ5Q3BJZHModGV4dCkgewogIHJldHVybiB0ZXh0LnJlcGxhY2UoL1BMTVxkKy9nLCBtYXRjaCA9PiB7CiAgICBjb25zdCByZWwgPSBnZXRDcFJlbGVhc2UobWF0Y2gpOwogICAgY29uc3QgdXJsID0gcmVsID8gY3BVcmwocmVsKSA6IGNwVXJsQnlJZChudWxsLCBtYXRjaCk7CiAgICByZXR1cm4gYDxhIGhyZWY9IiR7dXJsfSIgdGFyZ2V0PSJfYmxhbmsiIG9uY2xpY2s9ImV2ZW50LnN0b3BQcm9wYWdhdGlvbigpIj4ke21hdGNofTwvYT5gOwogIH0pOwp9CgpmdW5jdGlvbiBidWlsZENhcmRTdGF0dXNCbG9jayhjYXJkKSB7CiAgbGV0IG1zZyA9ICcnOwogIG1zZyArPSBg8J+TiyAke2NhcmQuaWR9IOKAlCAke2NhcmQudGl0bGV9XG5gOwogIG1zZyArPSBg8J+OryBUeXBlOiAke2NhcmQudHlwZX0gfCBTdGF0dXM6ICR7Y2FyZC5zdGF0dXMucmVwbGFjZSgvXy9nLCcgJyl9XG5gOwogIG1zZyArPSBg8J+UlyAke1BPTEFSSU9OX1VSTH0ke2NhcmQuaWR9XG5cbmA7CiAgY2FyZC5yZWxlYXNlcy5mb3JFYWNoKHIgPT4gewogICAgY29uc3QgZW1vamkgPSBTVEFUVVNfRU1PSklbci5zdGF0dXNdIHx8ICfimqonOwogICAgbXNnICs9IGDilIDilIDilIAg8J+TpiAke3IubmFtZX0g4pSA4pSA4pSAXG5gOwogICAgbXNnICs9IGAke2Vtb2ppfSAke3IuY3BJZCB8fCAnTm8gQ1AnfSB8ICR7ci5jcFN0YXRlIHx8ICduL2EnfSR7ci5jcFR5cGUgPyAnIHwgJyArIHIuY3BUeXBlIDogJyd9IHwgJHtyLnN0YXR1cy5yZXBsYWNlKC9fL2csJyAnKX1gOwogICAgaWYgKHIudmFsaWRhdGVkKSBtc2cgKz0gJyDinJMgVmFsaWRhdGVkJzsKICAgIG1zZyArPSAnXG4nOwogICAgaWYgKHIuY3BJZCkgbXNnICs9IGAgICBETVM6ICR7Y3BVcmwocil9XG5gOwogICAgbXNnICs9ICdcbic7CiAgfSk7CiAgaWYgKGNhcmQuYW5ub3RhdGlvbnMgJiYgY2FyZC5hbm5vdGF0aW9ucy5sZW5ndGggPiAwKSB7CiAgICBtc2cgKz0gYOKUgOKUgOKUgCDimqEgQWN0aW9ucyDilIDilIDilIBcbmA7CiAgICBjYXJkLmFubm90YXRpb25zLmZvckVhY2goKGEsIGkpID0+IHsgbXNnICs9IGAke2krMX3vuI/ig6MgJHthfVxuYDsgfSk7CiAgICBtc2cgKz0gJ1xuJzsKICB9CiAgcmV0dXJuIG1zZzsKfQoKZnVuY3Rpb24gYnVpbGRGdWxsTWVzc2FnZShjYXJkcywgYXNzaWduZWVOYW1lKSB7CiAgY29uc3QgZmlyc3ROYW1lID0gYXNzaWduZWVOYW1lID8gYXNzaWduZWVOYW1lLnNwbGl0KCcgJylbMF0gOiAnVGVhbSc7CiAgbGV0IG1zZyA9IGBIaSAke2ZpcnN0TmFtZX0sXG5cbmA7CiAgbXNnICs9IGDwn5OLIFNEUiBDUCBUcmFja2VyIC0gU3RhdHVzIFJlcG9ydFxuYDsKICBtc2cgKz0gYOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgFxuXG5gOwogIGlmIChjYXJkcy5sZW5ndGggPiAxKSB7CiAgICBtc2cgKz0gYPCfk4ogU3VtbWFyeTogJHtjYXJkcy5sZW5ndGh9IGNhcmRzIGFzc2lnbmVkIHRvIHlvdVxuYDsKICAgIGNvbnN0IGJ5U3RhdHVzID0ge307CiAgICBjYXJkcy5mb3JFYWNoKGMgPT4geyBieVN0YXR1c1tjLnN0YXR1c10gPSAoYnlTdGF0dXNbYy5zdGF0dXNdfHwwKSArIDE7IH0pOwogICAgT2JqZWN0LmVudHJpZXMoYnlTdGF0dXMpLmZvckVhY2goKFtzLG5dKSA9PiB7IG1zZyArPSBgICAgJHtTVEFUVVNfRU1PSklbc118fCfimqonfSAke3MucmVwbGFjZSgvXy9nLCcgJyl9OiAke259XG5gOyB9KTsKICAgIG1zZyArPSAnXG7ilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIDilIBcblxuJzsKICB9CiAgY2FyZHMuZm9yRWFjaChjYXJkID0+IHsgbXNnICs9IGJ1aWxkQ2FyZFN0YXR1c0Jsb2NrKGNhcmQpOyB9KTsKICBtc2cgKz0gYOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgOKUgFxuYDsKICBtc2cgKz0gYEdlbmVyYXRlZDogJHtuZXcgRGF0ZShkYXRhLmdlbmVyYXRlZCkudG9Mb2NhbGVEYXRlU3RyaW5nKCl9IHwgTUZFIFRDTSBUcmFja2VyXG5UaGFua3MhYDsKICByZXR1cm4gbXNnOwp9CgpmdW5jdGlvbiBidWlsZENhcmRUZWFtc0xpbmsoY2FyZCkgewogIGNvbnN0IHZhbGlkQXNzaWduZWVzID0gY2FyZC5hc3NpZ25lZXMuZmlsdGVyKGEgPT4gYS5lbWFpbCk7CiAgaWYgKHZhbGlkQXNzaWduZWVzLmxlbmd0aCA9PT0gMCkgcmV0dXJuICcjJzsKICBjb25zdCBlbWFpbHMgPSB2YWxpZEFzc2lnbmVlcy5tYXAoYSA9PiBhLmVtYWlsKS5qb2luKCcsJyk7CiAgY29uc3QgbXNnID0gYnVpbGRGdWxsTWVzc2FnZShbY2FyZF0sIHZhbGlkQXNzaWduZWVzWzBdPy5uYW1lKTsKICBjb25zdCB0b3BpYyA9IGVuY29kZVVSSUNvbXBvbmVudChgU0RSIFRyYWNrZXI6ICR7Y2FyZC5pZH1gKTsKICByZXR1cm4gYGh0dHBzOi8vdGVhbXMubWljcm9zb2Z0LmNvbS9sL2NoYXQvMC8wP3VzZXJzPSR7ZW5jb2RlVVJJQ29tcG9uZW50KGVtYWlscyl9JnRvcGljTmFtZT0ke3RvcGljfSZtZXNzYWdlPSR7ZW5jb2RlVVJJQ29tcG9uZW50KG1zZyl9YDsKfQoKZnVuY3Rpb24gYnVpbGRDYXJkVGVhbXNMaW5rRm9yQXNzaWduZWUoY2FyZCwgYXNzaWduZWUpIHsKICBpZiAoIWFzc2lnbmVlLmVtYWlsKSByZXR1cm4gJyMnOwogIGNvbnN0IG1zZyA9IGJ1aWxkRnVsbE1lc3NhZ2UoW2NhcmRdLCBhc3NpZ25lZS5uYW1lKTsKICBjb25zdCB0b3BpYyA9IGVuY29kZVVSSUNvbXBvbmVudChgU0RSIFRyYWNrZXI6ICR7Y2FyZC5pZH1gKTsKICByZXR1cm4gYGh0dHBzOi8vdGVhbXMubWljcm9zb2Z0LmNvbS9sL2NoYXQvMC8wP3VzZXJzPSR7ZW5jb2RlVVJJQ29tcG9uZW50KGFzc2lnbmVlLmVtYWlsKX0mdG9waWNOYW1lPSR7dG9waWN9Jm1lc3NhZ2U9JHtlbmNvZGVVUklDb21wb25lbnQobXNnKX1gOwp9CgpmdW5jdGlvbiBnZXRBc3NpZ25lZUdyb3VwcygpIHsKICBjb25zdCBncm91cHMgPSB7fTsKICBkYXRhLmNhcmRzLmZvckVhY2goY2FyZCA9PiB7CiAgICBjYXJkLmFzc2lnbmVlcy5mb3JFYWNoKGEgPT4gewogICAgICBpZiAoIWEuZW1haWwpIHJldHVybjsKICAgICAgaWYgKCFncm91cHNbYS5lbWFpbF0pIGdyb3Vwc1thLmVtYWlsXSA9IHsgbmFtZTogYS5uYW1lLCBlbWFpbDogYS5lbWFpbCwgY2FyZHM6IFtdIH07CiAgICAgIGdyb3Vwc1thLmVtYWlsXS5jYXJkcy5wdXNoKGNhcmQpOwogICAgfSk7CiAgfSk7CiAgcmV0dXJuIE9iamVjdC52YWx1ZXMoZ3JvdXBzKTsKfQoKZnVuY3Rpb24gdG9nZ2xlTm90aWZ5UGFuZWwoKSB7CiAgY29uc3QgcGFuZWwgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbm90aWZ5UGFuZWwnKTsKICBwYW5lbC5jbGFzc0xpc3QudG9nZ2xlKCd2aXNpYmxlJyk7CiAgaWYgKHBhbmVsLmNsYXNzTGlzdC5jb250YWlucygndmlzaWJsZScpKSByZW5kZXJBc3NpZ25lZUdyb3VwcygpOwp9CgpmdW5jdGlvbiByZW5kZXJBc3NpZ25lZUdyb3VwcygpIHsKICBjb25zdCBncm91cHMgPSBnZXRBc3NpZ25lZUdyb3VwcygpOwogIGNvbnN0IGNvbnRhaW5lciA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdhc3NpZ25lZUdyb3VwcycpOwogIGlmIChncm91cHMubGVuZ3RoID09PSAwKSB7CiAgICBjb250YWluZXIuaW5uZXJIVE1MID0gJzxwIHN0eWxlPSJjb2xvcjp2YXIoLS10ZXh0LW11dGVkKSI+Tm8gYXNzaWduZWVzIHdpdGggcmVzb2x2ZWQgZW1haWxzIGZvdW5kLjwvcD4nOwogICAgcmV0dXJuOwogIH0KICBjb250YWluZXIuaW5uZXJIVE1MID0gZ3JvdXBzLm1hcChnID0+IHsKICAgIGNvbnN0IG1zZyA9IGJ1aWxkRnVsbE1lc3NhZ2UoZy5jYXJkcywgZy5uYW1lKTsKICAgIGNvbnN0IHRvcGljID0gZW5jb2RlVVJJQ29tcG9uZW50KGBTRFIgVHJhY2tlcjogJHtnLmNhcmRzLm1hcChjPT5jLmlkKS5qb2luKCcsICcpfWApOwogICAgY29uc3QgbGluayA9IGBodHRwczovL3RlYW1zLm1pY3Jvc29mdC5jb20vbC9jaGF0LzAvMD91c2Vycz0ke2VuY29kZVVSSUNvbXBvbmVudChnLmVtYWlsKX0mdG9waWNOYW1lPSR7dG9waWN9Jm1lc3NhZ2U9JHtlbmNvZGVVUklDb21wb25lbnQobXNnKX1gOwogICAgY29uc3Qgc3RhdHVzQ291bnRzID0ge307CiAgICBnLmNhcmRzLmZvckVhY2goYyA9PiB7IHN0YXR1c0NvdW50c1tjLnN0YXR1c10gPSAoc3RhdHVzQ291bnRzW2Muc3RhdHVzXXx8MCkgKyAxOyB9KTsKICAgIHJldHVybiBgCiAgICAgIDxkaXYgY2xhc3M9ImFzc2lnbmVlLWdyb3VwIj4KICAgICAgICA8ZGl2IGNsYXNzPSJhc3NpZ25lZS1ncm91cC1oZWFkZXIiPgogICAgICAgICAgPHN0cm9uZz7wn5GkICR7Zy5uYW1lfTwvc3Ryb25nPgogICAgICAgICAgPGEgY2xhc3M9InNlbmQtc3RhdHVzLWJ0biIgaHJlZj0iJHtsaW5rfSIgdGFyZ2V0PSJfYmxhbmsiPvCfk6ggU2VuZCBDb21wbGV0ZSBTdGF0dXMgKCR7Zy5jYXJkcy5sZW5ndGh9IGNhcmQke2cuY2FyZHMubGVuZ3RoPjE/J3MnOicnfSk8L2E+CiAgICAgICAgPC9kaXY+CiAgICAgICAgPGRpdiBjbGFzcz0iYXNzaWduZWUtY2FyZHMtc3VtbWFyeSI+CiAgICAgICAgICAke2cuY2FyZHMubWFwKGMgPT4gYDxzcGFuPiR7U1RBVFVTX0VNT0pJW2Muc3RhdHVzXXx8J+Kaqid9ICR7Yy5pZH08L3NwYW4+YCkuam9pbignJyl9CiAgICAgICAgICAmbmJzcDt8Jm5ic3A7CiAgICAgICAgICAke09iamVjdC5lbnRyaWVzKHN0YXR1c0NvdW50cykubWFwKChbcyxuXSkgPT4gYCR7U1RBVFVTX0VNT0pJW3NdfHwn4pqqJ30gJHtzLnJlcGxhY2UoL18vZywnICcpfTogJHtufWApLmpvaW4oJyDCtyAnKX0KICAgICAgICA8L2Rpdj4KICAgICAgPC9kaXY+CiAgICBgOwogIH0pLmpvaW4oJycpOwp9CgpmdW5jdGlvbiBpbml0KCkgewogIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCd0aW1lc3RhbXAnKS50ZXh0Q29udGVudCA9ICdMYXN0IHVwZGF0ZWQ6ICcgKyBuZXcgRGF0ZShkYXRhLmdlbmVyYXRlZCkudG9Mb2NhbGVTdHJpbmcoKTsKICByZW5kZXJTdW1tYXJ5KCk7CiAgcG9wdWxhdGVGaWx0ZXJzKCk7CiAgcmVuZGVyQ2FyZHMoZGF0YS5jYXJkcyk7Cn0KCmZ1bmN0aW9uIHJlbmRlclN1bW1hcnkoKSB7CiAgY29uc3QgcyA9IGRhdGEuc3VtbWFyeTsKICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnc3VtbWFyeScpLmlubmVySFRNTCA9IGAKICAgIDxkaXYgY2xhc3M9InN1bW1hcnktY2FyZCB0b3RhbCI+PGRpdiBjbGFzcz0iY291bnQiPiR7cy50b3RhbH08L2Rpdj48ZGl2IGNsYXNzPSJsYWJlbCI+VG90YWwgQ2FyZHM8L2Rpdj48L2Rpdj4KICAgIDxkaXYgY2xhc3M9InN1bW1hcnktY2FyZCBjb21wbGV0ZSI+PGRpdiBjbGFzcz0iY291bnQiPiR7cy5jb21wbGV0ZX08L2Rpdj48ZGl2IGNsYXNzPSJsYWJlbCI+Q29tcGxldGU8L2Rpdj48L2Rpdj4KICAgIDxkaXYgY2xhc3M9InN1bW1hcnktY2FyZCBwcm9ncmVzcyI+PGRpdiBjbGFzcz0iY291bnQiPiR7cy5pblByb2dyZXNzfTwvZGl2PjxkaXYgY2xhc3M9ImxhYmVsIj5JbiBQcm9ncmVzczwvZGl2PjwvZGl2PgogICAgPGRpdiBjbGFzcz0ic3VtbWFyeS1jYXJkIGFjdGlvbiI+PGRpdiBjbGFzcz0iY291bnQiPiR7cy5hY3Rpb25SZXF1aXJlZH08L2Rpdj48ZGl2IGNsYXNzPSJsYWJlbCI+QWN0aW9uIFJlcXVpcmVkPC9kaXY+PC9kaXY+CiAgYDsKfQoKZnVuY3Rpb24gcG9wdWxhdGVGaWx0ZXJzKCkgewogIGNvbnN0IHJlbGVhc2VzID0gbmV3IFNldCgpOwogIGNvbnN0IGFzc2lnbmVlcyA9IG5ldyBTZXQoKTsKICBkYXRhLmNhcmRzLmZvckVhY2goYyA9PiB7CiAgICBjLnJlbGVhc2VzLmZvckVhY2gociA9PiByZWxlYXNlcy5hZGQoci5uYW1lKSk7CiAgICBjLmFzc2lnbmVlcy5mb3JFYWNoKGEgPT4gYXNzaWduZWVzLmFkZChhLm5hbWUpKTsKICB9KTsKICBjb25zdCByZiA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdyZWxlYXNlRmlsdGVyJyk7CiAgcmVsZWFzZXMuZm9yRWFjaChyID0+IHsgY29uc3QgbyA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ29wdGlvbicpOyBvLnZhbHVlID0gcjsgby50ZXh0Q29udGVudCA9IHI7IHJmLmFwcGVuZENoaWxkKG8pOyB9KTsKICBjb25zdCBhZiA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdhc3NpZ25lZUZpbHRlcicpOwogIGFzc2lnbmVlcy5mb3JFYWNoKGEgPT4geyBjb25zdCBvID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnb3B0aW9uJyk7IG8udmFsdWUgPSBhOyBvLnRleHRDb250ZW50ID0gYTsgYWYuYXBwZW5kQ2hpbGQobyk7IH0pOwp9CgpmdW5jdGlvbiBmaWx0ZXJDYXJkcygpIHsKICBjb25zdCBzZWFyY2ggPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnc2VhcmNoJykudmFsdWUudG9Mb3dlckNhc2UoKTsKICBjb25zdCBzdGF0dXMgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnc3RhdHVzRmlsdGVyJykudmFsdWU7CiAgY29uc3QgcmVsZWFzZSA9IGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdyZWxlYXNlRmlsdGVyJykudmFsdWU7CiAgY29uc3QgYXNzaWduZWUgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnYXNzaWduZWVGaWx0ZXInKS52YWx1ZTsKICBjb25zdCBmaWx0ZXJlZCA9IGRhdGEuY2FyZHMuZmlsdGVyKGMgPT4gewogICAgaWYgKHNlYXJjaCAmJiAhYCR7Yy5pZH0gJHtjLnRpdGxlfSAke2MudHlwZX1gLnRvTG93ZXJDYXNlKCkuaW5jbHVkZXMoc2VhcmNoKSkgcmV0dXJuIGZhbHNlOwogICAgaWYgKHN0YXR1cyAmJiBjLnN0YXR1cyAhPT0gc3RhdHVzKSByZXR1cm4gZmFsc2U7CiAgICBpZiAocmVsZWFzZSAmJiAhYy5yZWxlYXNlcy5zb21lKHIgPT4gci5uYW1lID09PSByZWxlYXNlKSkgcmV0dXJuIGZhbHNlOwogICAgaWYgKGFzc2lnbmVlICYmICFjLmFzc2lnbmVlcy5zb21lKGEgPT4gYS5uYW1lID09PSBhc3NpZ25lZSkpIHJldHVybiBmYWxzZTsKICAgIHJldHVybiB0cnVlOwogIH0pOwogIHJlbmRlckNhcmRzKGZpbHRlcmVkKTsKfQoKZnVuY3Rpb24gcmVuZGVyQ2FyZHMoY2FyZHMpIHsKICBjb25zdCBsaXN0ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2NhcmRMaXN0Jyk7CiAgaWYgKGNhcmRzLmxlbmd0aCA9PT0gMCkgewogICAgbGlzdC5pbm5lckhUTUwgPSAnPHAgc3R5bGU9InRleHQtYWxpZ246Y2VudGVyO2NvbG9yOnZhcigtLXRleHQtbXV0ZWQpO3BhZGRpbmc6NDBweDsiPk5vIGNhcmRzIGZvdW5kLjwvcD4nOwogICAgcmV0dXJuOwogIH0KICBsaXN0LmlubmVySFRNTCA9IGNhcmRzLm1hcCgoY2FyZCwgaWR4KSA9PiBgCiAgICA8ZGl2IGNsYXNzPSJ0cmFja2VyLWNhcmQke2lkeCA9PT0gMCA/ICcgZXhwYW5kZWQnIDogJyd9IiBkYXRhLWNhcmQtaWQ9IiR7Y2FyZC5pZH0iIG9uY2xpY2s9ImhhbmRsZUNhcmRDbGljayhldmVudCwgdGhpcykiPgogICAgICA8ZGl2IGNsYXNzPSJjYXJkLWhlYWRlciI+CiAgICAgICAgPGlucHV0IHR5cGU9ImNoZWNrYm94IiBjbGFzcz0iY2FyZC1jaGVja2JveCIgZGF0YS1jYXJkLWlkPSIke2NhcmQuaWR9IiBvbmNsaWNrPSJldmVudC5zdG9wUHJvcGFnYXRpb24oKTsgdXBkYXRlU2VsZWN0ZWRDb3VudCgpIj4KICAgICAgICA8ZGl2IGNsYXNzPSJjYXJkLXN0YXR1cy1pbmRpY2F0b3IgJHtjYXJkLnN0YXR1c30iPjwvZGl2PgogICAgICAgIDxhIGNsYXNzPSJjYXJkLWlkIiBocmVmPSIke2RhdGEucG9sYXJpb25CYXNlVXJsfSR7Y2FyZC5pZH0iIHRhcmdldD0iX2JsYW5rIiBvbmNsaWNrPSJldmVudC5zdG9wUHJvcGFnYXRpb24oKSI+JHtjYXJkLmlkfTwvYT4KICAgICAgICA8c3BhbiBjbGFzcz0iY2FyZC10eXBlIj4ke2NhcmQudHlwZX08L3NwYW4+CiAgICAgICAgPHNwYW4gY2xhc3M9ImNhcmQtdGl0bGUiPiR7Y2FyZC50aXRsZX08L3NwYW4+CiAgICAgICAgPHNwYW4gY2xhc3M9ImNhcmQtc3RhdHVzLWJhZGdlICR7Y2FyZC5zdGF0dXN9Ij4ke2NhcmQuc3RhdHVzLnJlcGxhY2UoL18vZywnICcpfTwvc3Bhbj4KICAgICAgICAke2J1aWxkQ2FyZFRlYW1zTGluayhjYXJkKSAhPT0gJyMnCiAgICAgICAgICA/IGA8YSBjbGFzcz0iY2FyZC1oZWFkZXItbm90aWZ5IiBocmVmPSIke2J1aWxkQ2FyZFRlYW1zTGluayhjYXJkKX0iIHRhcmdldD0iX2JsYW5rIiBvbmNsaWNrPSJldmVudC5zdG9wUHJvcGFnYXRpb24oKSI+8J+TqCBOb3RpZnk8L2E+YAogICAgICAgICAgOiBgPHNwYW4gY2xhc3M9ImNhcmQtaGVhZGVyLW5vdGlmeSIgc3R5bGU9Im9wYWNpdHk6MC40NTtjdXJzb3I6bm90LWFsbG93ZWQiIHRpdGxlPSJFbWFpbCBub3QgcmVzb2x2ZWQg4oCUIHJ1bjogcHl0aG9uIGRtc19jbGllbnQucHkgcmVzb2x2ZS1lbWFpbHMgLS11cGRhdGUtY2FyZHMgY2FyZHMuanNvbiI+8J+TqCBOb3RpZnkgKG5vIGVtYWlsKTwvc3Bhbj5gCiAgICAgICAgfQogICAgICAgIDxzcGFuIGNsYXNzPSJleHBhbmQtaWNvbiI+4pa8PC9zcGFuPgogICAgICA8L2Rpdj4KICAgICAgPGRpdiBjbGFzcz0iY2FyZC1kZXRhaWxzIj4KICAgICAgICA8ZGl2IGNsYXNzPSJjYXJkLWRldGFpbHMtaW5uZXIiPgogICAgICAgICAgPGRpdiBjbGFzcz0icmVsZWFzZXMtZ3JpZCI+CiAgICAgICAgICAgICR7Y2FyZC5yZWxlYXNlcy5tYXAociA9PiBgCiAgICAgICAgICAgICAgPGRpdiBjbGFzcz0icmVsZWFzZS1yb3ciPgogICAgICAgICAgICAgICAgPHNwYW4gY2xhc3M9InJlbGVhc2UtbmFtZSI+JHtyLm5hbWV9PC9zcGFuPgogICAgICAgICAgICAgICAgPHNwYW4gY2xhc3M9InJlbGVhc2Utc3RhdHVzIj48c3BhbiBjbGFzcz0icmVsZWFzZS1kb3QgJHtyLnN0YXR1c30iPjwvc3Bhbj4ke3Iuc3RhdHVzLnJlcGxhY2UoL18vZywnICcpfTwvc3Bhbj4KICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzPSJyZWxlYXNlLWNwIj4ke3IuY3BJZCA/IGA8YSBocmVmPSIke2NwVXJsKHIpfSIgdGFyZ2V0PSJfYmxhbmsiIG9uY2xpY2s9ImV2ZW50LnN0b3BQcm9wYWdhdGlvbigpIj4ke3IuY3BJZH08L2E+ICgke3IuY3BTdGF0ZX0ke3IuY3BUeXBlID8gJywgJyArIHIuY3BUeXBlIDogJyd9KWAgOiAnTm8gQ1AnfTwvc3Bhbj4KICAgICAgICAgICAgICAgICR7ci52YWxpZGF0ZWQgPyAnPHNwYW4gc3R5bGU9ImNvbG9yOnZhcigtLWdyZWVuKSI+4pyTIFZhbGlkYXRlZDwvc3Bhbj4nIDogJyd9CiAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgIGApLmpvaW4oJycpfQogICAgICAgICAgPC9kaXY+CiAgICAgICAgICAke2NhcmQuYW5ub3RhdGlvbnMgJiYgY2FyZC5hbm5vdGF0aW9ucy5sZW5ndGggPiAwID8gYAogICAgICAgICAgICA8ZGl2IGNsYXNzPSJhbm5vdGF0aW9ucyI+CiAgICAgICAgICAgICAgJHtjYXJkLmFubm90YXRpb25zLm1hcChhID0+IGA8ZGl2IGNsYXNzPSJhbm5vdGF0aW9uIj48c3BhbiBjbGFzcz0iYW5ub3RhdGlvbi1pY29uIj7imqE8L3NwYW4+JHtsaW5raWZ5Q3BJZHMoYSl9PC9kaXY+YCkuam9pbignJyl9CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgYCA6ICcnfQogICAgICAgICAgPGRpdiBjbGFzcz0iY2FyZC1hY3Rpb25zIj4KICAgICAgICAgICAgJHtjYXJkLmFzc2lnbmVlcy5tYXAoYSA9PiBhLmVtYWlsCiAgICAgICAgICAgICAgPyBgPGEgY2xhc3M9Im5vdGlmeS1idG4iIGhyZWY9IiR7YnVpbGRDYXJkVGVhbXNMaW5rRm9yQXNzaWduZWUoY2FyZCwgYSl9IiB0YXJnZXQ9Il9ibGFuayIgb25jbGljaz0iZXZlbnQuc3RvcFByb3BhZ2F0aW9uKCkiPvCfk6ggJHthLm5hbWV9PC9hPmAKICAgICAgICAgICAgICA6IGA8c3BhbiBjbGFzcz0ibm90aWZ5LWJ0biIgc3R5bGU9Im9wYWNpdHk6MC40NTtjdXJzb3I6bm90LWFsbG93ZWQiIHRpdGxlPSJFbWFpbCBub3QgcmVzb2x2ZWQgZm9yICR7YS5uYW1lfSI+8J+TqCAke2EubmFtZX0gKG5vIGVtYWlsKTwvc3Bhbj5gCiAgICAgICAgICAgICkuam9pbignJyl9CiAgICAgICAgICA8L2Rpdj4KICAgICAgICA8L2Rpdj4KICAgICAgPC9kaXY+CiAgICA8L2Rpdj4KICBgKS5qb2luKCcnKTsKfQoKZnVuY3Rpb24gaGFuZGxlQ2FyZENsaWNrKGV2ZW50LCBlbCkgewogIGlmIChldmVudC50YXJnZXQudGFnTmFtZSA9PT0gJ0lOUFVUJyB8fCBldmVudC50YXJnZXQudGFnTmFtZSA9PT0gJ0EnKSByZXR1cm47CiAgZWwuY2xhc3NMaXN0LnRvZ2dsZSgnZXhwYW5kZWQnKTsKfQoKZnVuY3Rpb24gdG9nZ2xlU2VsZWN0QWxsKCkgewogIGNvbnN0IGNoZWNrZWQgPSBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnc2VsZWN0QWxsJykuY2hlY2tlZDsKICBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCcuY2FyZC1saXN0IC5jYXJkLWNoZWNrYm94JykuZm9yRWFjaChjYiA9PiB7IGNiLmNoZWNrZWQgPSBjaGVja2VkOyB9KTsKICB1cGRhdGVTZWxlY3RlZENvdW50KCk7Cn0KCmZ1bmN0aW9uIHVwZGF0ZVNlbGVjdGVkQ291bnQoKSB7CiAgY29uc3QgY2hlY2tlZCA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3JBbGwoJy5jYXJkLWxpc3QgLmNhcmQtY2hlY2tib3g6Y2hlY2tlZCcpOwogIGNvbnN0IGNvdW50ID0gY2hlY2tlZC5sZW5ndGg7CiAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3NlbGVjdGVkQ291bnQnKS50ZXh0Q29udGVudCA9IGNvdW50ICsgJyBzZWxlY3RlZCc7CiAgZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ25vdGlmeVNlbGVjdGVkQnRuJykuZGlzYWJsZWQgPSBjb3VudCA9PT0gMDsKfQoKZnVuY3Rpb24gbm90aWZ5U2VsZWN0ZWQoKSB7CiAgY29uc3QgY2hlY2tlZElkcyA9IFsuLi5kb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCcuY2FyZC1saXN0IC5jYXJkLWNoZWNrYm94OmNoZWNrZWQnKV0ubWFwKGNiID0+IGNiLmRhdGFzZXQuY2FyZElkKTsKICBpZiAoY2hlY2tlZElkcy5sZW5ndGggPT09IDApIHJldHVybjsKICBjb25zdCBzZWxlY3RlZENhcmRzID0gZGF0YS5jYXJkcy5maWx0ZXIoYyA9PiBjaGVja2VkSWRzLmluY2x1ZGVzKGMuaWQpKTsKICBjb25zdCBncm91cHMgPSB7fTsKICBzZWxlY3RlZENhcmRzLmZvckVhY2goY2FyZCA9PiB7CiAgICBjYXJkLmFzc2lnbmVlcy5mb3JFYWNoKGEgPT4gewogICAgICBpZiAoIWEuZW1haWwpIHJldHVybjsKICAgICAgaWYgKCFncm91cHNbYS5lbWFpbF0pIGdyb3Vwc1thLmVtYWlsXSA9IHsgbmFtZTogYS5uYW1lLCBlbWFpbDogYS5lbWFpbCwgY2FyZHM6IFtdIH07CiAgICAgIGdyb3Vwc1thLmVtYWlsXS5jYXJkcy5wdXNoKGNhcmQpOwogICAgfSk7CiAgfSk7CiAgY29uc3QgYWxsR3JvdXBzID0gT2JqZWN0LnZhbHVlcyhncm91cHMpOwogIGlmIChhbGxHcm91cHMubGVuZ3RoID09PSAwKSB7IGFsZXJ0KCdObyBhc3NpZ25lZXMgd2l0aCByZXNvbHZlZCBlbWFpbCBhZGRyZXNzZXMuJyk7IHJldHVybjsgfQogIGlmIChhbGxHcm91cHMubGVuZ3RoID09PSAxKSB7CiAgICBjb25zdCBnID0gYWxsR3JvdXBzWzBdOwogICAgY29uc3QgbXNnID0gYnVpbGRGdWxsTWVzc2FnZShnLmNhcmRzLCBnLm5hbWUpOwogICAgY29uc3QgdG9waWMgPSBlbmNvZGVVUklDb21wb25lbnQoJ1NEUiBUcmFja2VyOiAnICsgZy5jYXJkcy5tYXAoYz0+Yy5pZCkuam9pbignLCAnKSk7CiAgICB3aW5kb3cub3BlbihgaHR0cHM6Ly90ZWFtcy5taWNyb3NvZnQuY29tL2wvY2hhdC8wLzA/dXNlcnM9JHtlbmNvZGVVUklDb21wb25lbnQoZy5lbWFpbCl9JnRvcGljTmFtZT0ke3RvcGljfSZtZXNzYWdlPSR7ZW5jb2RlVVJJQ29tcG9uZW50KG1zZyl9YCwgJ19ibGFuaycpOwogIH0gZWxzZSB7CiAgICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnbm90aWZ5UGFuZWwnKS5jbGFzc0xpc3QuYWRkKCd2aXNpYmxlJyk7CiAgICByZW5kZXJBc3NpZ25lZUdyb3VwcygpOwogIH0KfQoKZnVuY3Rpb24gdG9nZ2xlVGhlbWUoKSB7CiAgY29uc3QgaHRtbCA9IGRvY3VtZW50LmRvY3VtZW50RWxlbWVudDsKICBodG1sLmRhdGFzZXQudGhlbWUgPSBodG1sLmRhdGFzZXQudGhlbWUgPT09ICdkYXJrJyA/ICdsaWdodCcgOiAnZGFyayc7Cn0KCmluaXQoKTsKPC9zY3JpcHQ+CjwvYm9keT4KPC9odG1sPgo=";
+
+  // ── create blob URL exactly once, cache it ───────────────────────
+  let _blobURL = null;
+  function getBlobURL() {
+    if (_blobURL) return _blobURL;
+    try {
+      const bin = atob(_B64);
+      const buf = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
+      _blobURL = URL.createObjectURL(new Blob([buf], { type: "text/html" }));
+    } catch(e) {
+      console.error("MFE Pitch: failed to create blob URL", e);
+    }
+    return _blobURL;
+  }
+
+  // ── open in new tab ─────────────────────────────────────────────
+  window.openDashboard = function () {
+    var url = getBlobURL();
+    if (url) {
+      window.open(url, "_blank");
+    } else {
+      alert("Could not load dashboard preview. Please open mfe-tcm-tracker/dashboard/mfe-tcm-tracker-dashboard.html directly.");
+    }
+  };
+
+  // ── wire up iframe ──────────────────────────────────────────────
+  function initIframe() {
+    var fr = document.getElementById("dashboard-iframe");
+    if (!fr) return;
+    var wrap = document.getElementById("iframe-loading-wrap");
+    var spinner = document.getElementById("iframe-spinner");
+
+    var url = getBlobURL();
+    if (!url) {
+      if (spinner) spinner.innerHTML = '<p style="color:rgba(255,255,255,.4);font-size:13px;text-align:center">Preview unavailable — open the dashboard file directly</p>';
+      return;
+    }
+
+    fr.onload = function () {
+      fr.style.opacity = "1";
+      if (spinner) spinner.style.display = "none";
+    };
+    fr.onerror = function () {
+      if (spinner) spinner.innerHTML = '<p style="color:rgba(255,255,255,.4);font-size:13px;text-align:center">Preview failed — click &ldquo;Open Full Dashboard&rdquo; to view</p>';
+    };
+    fr.style.opacity = "0";
+    fr.style.transition = "opacity 0.5s ease";
+    fr.src = url;
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initIframe);
+  } else {
+    initIframe();
+  }
+
+  // ── cleanup blob URL on page unload ─────────────────────────────
+  window.addEventListener("unload", function () {
+    if (_blobURL) { URL.revokeObjectURL(_blobURL); _blobURL = null; }
+  });
+}());
+</script>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════ HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-dots"></div>
+
+  <div class="hero-topbar">
+    <div class="siemens-logo">
+      <!-- Siemens-style wordmark SVG -->
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="24" height="24" rx="4" fill="rgba(255,255,255,0.15)"/>
+        <path d="M4 8h16M4 12h16M4 16h10" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      Internal Innovation
+    </div>
+    <div class="hero-badge">Management Briefing</div>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-tag">AI-Powered DevOps Automation</div>
+
+    <h1 class="hero-title">
+      MFE TCM<br/><span>Tracker Agent</span>
+    </h1>
+
+    <p class="hero-sub">
+      An intelligent GitHub Copilot Agent that automates SDR Change Package tracking
+      across Polarion &amp; DMS — turning hours of manual investigation into seconds.
+    </p>
+
+    <div class="hero-pills">
+      <div class="pill"><span class="pill-dot"></span>Polarion Integration</div>
+      <div class="pill"><span class="pill-dot"></span>DMS Automation</div>
+      <div class="pill"><span class="pill-dot"></span>Live Dashboards</div>
+      <div class="pill"><span class="pill-dot"></span>Teams Notifications</div>
+      <div class="pill"><span class="pill-dot" style="background:#8b5cf6"></span>AI Orchestration</div>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-num">4</span>
+        <span class="stat-label">Systems Connected</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">~mins</span>
+        <span class="stat-label">vs. Hours Manual</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">0</span>
+        <span class="stat-label">Manual Steps</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">100%</span>
+        <span class="stat-label">Automated</span>
+      </div>
+    </div>
+
+    <!-- ★ HERO DASHBOARD CTA ★ -->
+    <div class="hero-cta-row">
+      <a href="#" onclick="openDashboard(); return false;" target="_blank" class="hero-cta-btn">
+        <span class="live-badge">Live</span>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <rect x="2" y="4" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M6 14v2M14 14v2M4 16h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M6 8h6M6 10.5h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+        View Sample Dashboard Output
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M3 8h10M8 3l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <svg width="14" height="8" viewBox="0 0 14 8" fill="none">
+      <path d="M1 1l6 6 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════ DASHBOARD PREVIEW / SEE IT IN ACTION -->
+<section class="preview-section">
+  <div class="preview-inner">
+    <div class="preview-bridge"></div>
+
+    <div class="preview-headline">
+      <div class="section-label">See It In Action</div>
+      <h2>This is the actual output — live &amp; real</h2>
+      <p>The dashboard below is generated automatically by the agent in a single command. No manual input. No formatting. Just results.</p>
+    </div>
+
+    <!-- Browser chrome wrapping the real dashboard -->  
+    <div class="browser-mockup">
+      <div class="browser-bar">
+        <div class="browser-dots">
+          <span></span><span></span><span></span>
+        </div>
+        <div class="browser-url">
+          <span class="browser-url-dot"></span>
+          mfe-tcm-tracker/dashboard/mfe-tcm-tracker-dashboard.html
+        </div>
+        <a href="#" onclick="openDashboard(); return false;" target="_blank"
+           style="flex-shrink:0;display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:var(--teal);text-decoration:none;background:rgba(0,212,200,.1);border:1px solid rgba(0,212,200,.3);padding:5px 12px;border-radius:20px;transition:background .2s"
+           onmouseover="this.style.background='rgba(0,212,200,.2)'" onmouseout="this.style.background='rgba(0,212,200,.1)'">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Open
+        </a>
+      </div>
+      <div id="iframe-loading-wrap" class="browser-iframe-wrap">
+        <!-- loading spinner shown until iframe fires onload -->
+        <div id="iframe-spinner" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:4;pointer-events:none">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" style="animation:spin 1s linear infinite">
+            <circle cx="20" cy="20" r="16" stroke="rgba(0,212,200,0.15)" stroke-width="3"/>
+            <path d="M20 4a16 16 0 0 1 16 16" stroke="#00d4c8" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          <span style="font-size:12px;color:rgba(255,255,255,0.35);letter-spacing:1px">Loading dashboard preview…</span>
+        </div>
+        <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+        <iframe id="dashboard-iframe" src=""
+                title="MFE TCM Tracker Dashboard Sample"
+                >
+        </iframe>
+        <!-- Clickable overlay to open in new tab -->
+        <div class="iframe-overlay"
+             onclick="openDashboard()"
+             title="Click to open full dashboard">
+          <div class="iframe-overlay-hint">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Click to open full interactive dashboard
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <a href="#" onclick="openDashboard(); return false;" target="_blank" class="preview-open-btn">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <rect x="2" y="3" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/>
+        <path d="M5 13v2M13 13v2M3 15h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        <circle cx="13.5" cy="4.5" r="3" fill="#10b981" stroke="#071020" stroke-width="1"/>
+        <path d="M12.5 4.5l.7.7 1.3-1.2" stroke="#071020" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Open Full Interactive Dashboard
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <path d="M4 9h10M9 4l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+
+    <p style="margin-top:14px;font-size:12px;color:rgba(255,255,255,.25)">
+      Generated by <code style="color:rgba(0,212,200,.5);font-size:11px">@mfe-tcm-tracker generate dashboard</code> — refreshes on every run
+    </p>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════ PROBLEM -->
+<section class="problem-section">
+  <div class="container">
+    <div class="problem-grid">
+      <div>
+        <div class="section-label">The Challenge</div>
+        <h2 class="section-title">Tracking CP status was a time drain</h2>
+        <p class="section-sub">
+          Every SDR delivery required engineers to manually cross-reference Polarion cards,
+          DMS change packages, and release branches — a process prone to human error and delays.
+        </p>
+      </div>
+
+      <div class="problem-list">
+        <div class="problem-item">
+          <div class="problem-icon red">⏱️</div>
+          <div class="problem-text">
+            <h4>Hours of manual investigation</h4>
+            <p>Engineers spent 30–60 min per delivery cycle manually checking CP status across systems.</p>
+          </div>
+        </div>
+        <div class="problem-item">
+          <div class="problem-icon amber">🔀</div>
+          <div class="problem-text">
+            <h4>Fragmented data across tools</h4>
+            <p>Status lived in Polarion, DMS, and branch configs — no single source of truth.</p>
+          </div>
+        </div>
+        <div class="problem-item">
+          <div class="problem-icon purple">📭</div>
+          <div class="problem-text">
+            <h4>Missed notifications &amp; bottlenecks</h4>
+            <p>Delayed approvals went unnoticed, stalling release timelines without visibility.</p>
+          </div>
+        </div>
+        <div class="problem-item">
+          <div class="problem-icon gray">📉</div>
+          <div class="problem-text">
+            <h4>No status overview for managers</h4>
+            <p>Leadership had no real-time dashboard to see delivery health at a glance.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════ HOW IT WORKS -->
+<section class="how-section">
+  <div class="container">
+    <div class="section-label">The Workflow</div>
+    <h2 class="section-title">4 automated steps — zero manual effort</h2>
+    <p class="section-sub">Ask the agent once. It orchestrates everything in parallel across Polarion and DMS.</p>
+
+    <div class="flow-steps">
+
+      <div class="flow-step">
+        <div class="step-circle s1">
+          <span class="step-num">1</span>
+          <!-- scan SVG icon -->
+          <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
+            <circle cx="19" cy="16" r="8" stroke="white" stroke-width="2"/>
+            <path d="M14 16h10M19 11v10" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            <path d="M8 28c0-4.4 4.9-8 11-8s11 3.6 11 8" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3 class="step-title">Discover Cards</h3>
+        <p class="step-desc">Scans Polarion for all work items tagged <code style="font-size:10px;background:rgba(255,255,255,.1);padding:1px 5px;border-radius:4px">MFE_TCM_Tracker_ON</code>, extracts target release data in one batch call.</p>
+        <div class="step-tag">Polarion MCP</div>
+      </div>
+
+      <div class="flow-step">
+        <div class="step-circle s2">
+          <span class="step-num">2</span>
+          <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
+            <rect x="8" y="8" width="10" height="10" rx="2" stroke="white" stroke-width="2"/>
+            <rect x="20" y="8" width="10" height="10" rx="2" stroke="white" stroke-width="2"/>
+            <rect x="8" y="20" width="10" height="10" rx="2" stroke="white" stroke-width="2"/>
+            <rect x="20" y="20" width="10" height="10" rx="2" stroke="white" stroke-width="2"/>
+            <path d="M13 13h12M13 25h12M13 13v12M25 13v12" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="2 2"/>
+          </svg>
+        </div>
+        <h3 class="step-title">Verify CP Status</h3>
+        <p class="step-desc">Queries DMS for matching change packages across customer-specific release branches. Resolves open, submitted, and closed states.</p>
+        <div class="step-tag">DMS MCP</div>
+      </div>
+
+      <div class="flow-step">
+        <div class="step-circle s3">
+          <span class="step-num">3</span>
+          <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
+            <rect x="7" y="10" width="24" height="18" rx="3" stroke="white" stroke-width="2"/>
+            <path d="M7 15h24" stroke="white" stroke-width="1.5"/>
+            <circle cx="11" cy="12.5" r="1" fill="white"/>
+            <circle cx="15" cy="12.5" r="1" fill="white"/>
+            <circle cx="19" cy="12.5" r="1" fill="white"/>
+            <path d="M12 21h5M12 24h9" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="26" cy="24" r="4" fill="#10b981"/>
+            <path d="M24 24l1.5 1.5L28 22" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h3 class="step-title">Generate Dashboard</h3>
+        <p class="step-desc">Produces a single-file interactive HTML dashboard with colour-coded status, branch coverage, and actionable insights.</p>
+        <div class="step-tag">Auto Generated</div>
+      </div>
+
+      <div class="flow-step">
+        <div class="step-circle s4">
+          <span class="step-num">4</span>
+          <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
+            <path d="M8 12c0-2.2 1.8-4 4-4h14c2.2 0 4 1.8 4 4v12c0 2.2-1.8 4-4 4H18l-6 4v-4h-4c-2.2 0-4-1.8-4-4V12z" stroke="white" stroke-width="2"/>
+            <path d="M14 18h10M14 22h6" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3 class="step-title">Notify via Teams</h3>
+        <p class="step-desc">Generates Microsoft Teams deep-link notifications for assignees with ACTION REQUIRED cards — one click to send.</p>
+        <div class="step-tag">MS Teams</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════ CAPABILITIES -->
+<section class="caps-section">
+  <div class="container">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:20px">
+      <div>
+        <div class="section-label">Core Capabilities</div>
+        <h2 class="section-title">Everything in one agent</h2>
+      </div>
+      <p style="font-size:14px;color:var(--gray400);max-width:300px;text-align:right">
+        One natural-language command in VS Code Copilot Chat kicks off the entire pipeline.
+      </p>
+    </div>
+
+    <div class="caps-grid">
+
+      <div class="cap-card c1">
+        <div class="cap-icon i1">🔍</div>
+        <h3 class="cap-title">Intelligent Card Discovery</h3>
+        <p class="cap-desc">Automatically discovers all Polarion work items enrolled for SDR tracking via a simple hashtag convention.</p>
+        <div class="cap-bullets">
+          <div class="cap-bullet">Resolves target release relationships automatically</div>
+          <div class="cap-bullet">Supports multi-project Polarion workspaces</div>
+          <div class="cap-bullet">Cached hashtag ID for sub-second startup</div>
+        </div>
+      </div>
+
+      <div class="cap-card c2">
+        <div class="cap-icon i2">🔗</div>
+        <h3 class="cap-title">Cross-System CP Verification</h3>
+        <p class="cap-desc">Bridges Polarion cards to DMS change packages, mapping each fix to its target release branches in real-time.</p>
+        <div class="cap-bullets">
+          <div class="cap-bullet">Checks Open, Submitted, and Closed states</div>
+          <div class="cap-bullet">Maps CPs to customer branch names (e.g. SDR-xxx)</div>
+          <div class="cap-bullet">Detects missing CPs before they become blockers</div>
+        </div>
+      </div>
+
+      <div class="cap-card c3">
+        <div class="cap-icon i3">📊</div>
+        <h3 class="cap-title">Live Interactive Dashboard</h3>
+        <p class="cap-desc">Generates a self-contained HTML dashboard that can be shared via email or Teams — no server required.</p>
+        <div class="cap-bullets">
+          <div class="cap-bullet">Colour-coded status: ✅ Done / ⚠️ In Progress / 🔴 Action Required</div>
+          <div class="cap-bullet">Branch coverage heatmap per card</div>
+          <div class="cap-bullet">Embedded Teams notify links per assignee</div>
+        </div>
+      </div>
+
+      <div class="cap-card c4">
+        <div class="cap-icon i4">🔔</div>
+        <h3 class="cap-title">Smart Teams Notifications</h3>
+        <p class="cap-desc">Resolves developer emails from DMS and generates deep-link Teams messages — personalised per assignee.</p>
+        <div class="cap-bullets">
+          <div class="cap-bullet">Auto-resolves email from DMS user directory</div>
+          <div class="cap-bullet">Clickable Teams links open pre-filled chat</div>
+          <div class="cap-bullet">Bulk group link + individual per-developer links</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════ ARCHITECTURE -->
+<section class="arch-section">
+  <div class="container">
+    <div class="arch-container">
+      <div>
+        <div class="section-label">Architecture</div>
+        <h2 class="section-title">Built on Model Context Protocol</h2>
+        <p class="section-sub">
+          Two bundled MCP servers expose Polarion and DMS as structured tools
+          — the agent orchestrates them with zero hard-coded logic.
+        </p>
+
+        <div class="arch-text" style="margin-top:36px">
+          <div class="arch-point">
+            <div class="arch-dot teal"></div>
+            <div>
+              <h4>Polarion MCP Server</h4>
+              <p>Node.js server translating Copilot tool calls into Polarion REST API queries. Handles authentication, pagination, and field projection.</p>
+            </div>
+          </div>
+          <div class="arch-point">
+            <div class="arch-dot indigo"></div>
+            <div>
+              <h4>DMS MCP Server</h4>
+              <p>Fetches CP HTML pages, parses state &amp; branch info, resolves user emails. All internal DMS HTTP calls tunnelled through the server.</p>
+            </div>
+          </div>
+          <div class="arch-point">
+            <div class="arch-dot green"></div>
+            <div>
+              <h4>Automation Scripts (optional)</h4>
+              <p>Python pipeline for CI/headless runs — bypasses the agent and generates dashboards fully unattended via env-var credentials.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SVG Architecture Diagram -->
+      <div class="arch-diagram-wrap">
+        <svg viewBox="0 0 400 340" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto">
+          <!-- Background glow -->
+          <ellipse cx="200" cy="170" rx="160" ry="130" fill="rgba(0,212,200,0.04)"/>
+
+          <!-- User / Copilot Chat box -->
+          <rect x="130" y="12" width="140" height="46" rx="10" fill="rgba(0,212,200,0.12)" stroke="rgba(0,212,200,0.5)" stroke-width="1.5"/>
+          <text x="200" y="32" text-anchor="middle" fill="#00d4c8" font-size="9" font-weight="700" letter-spacing="1" font-family="Inter,sans-serif">GITHUB COPILOT CHAT</text>
+          <text x="200" y="48" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="8.5" font-family="Inter,sans-serif">@mfe-tcm-tracker generate dashboard</text>
+
+          <!-- Arrow down to agent -->
+          <line x1="200" y1="58" x2="200" y2="90" stroke="rgba(0,212,200,0.4)" stroke-width="1.5" stroke-dasharray="3 3"/>
+          <polygon points="196,88 204,88 200,96" fill="rgba(0,212,200,0.5)"/>
+
+          <!-- Agent box -->
+          <rect x="120" y="96" width="160" height="50" rx="10" fill="rgba(99,102,241,0.15)" stroke="rgba(99,102,241,0.6)" stroke-width="1.5"/>
+          <text x="200" y="117" text-anchor="middle" fill="#818cf8" font-size="9" font-weight="700" letter-spacing="1" font-family="Inter,sans-serif">AGENT ORCHESTRATOR</text>
+          <text x="200" y="133" text-anchor="middle" fill="rgba(255,255,255,0.45)" font-size="8" font-family="Inter,sans-serif">mfe-tcm-tracker.agent.md</text>
+
+          <!-- Arrows to MCP servers -->
+          <line x1="160" y1="146" x2="100" y2="186" stroke="rgba(0,212,200,0.35)" stroke-width="1.5" stroke-dasharray="3 3"/>
+          <polygon points="97,182 103,190 107,183" fill="rgba(0,212,200,0.4)"/>
+
+          <line x1="240" y1="146" x2="300" y2="186" stroke="rgba(139,92,246,0.35)" stroke-width="1.5" stroke-dasharray="3 3"/>
+          <polygon points="293,183 297,190 303,182" fill="rgba(139,92,246,0.4)"/>
+
+          <!-- Polarion MCP box -->
+          <rect x="32" y="190" width="130" height="50" rx="10" fill="rgba(0,212,200,0.1)" stroke="rgba(0,212,200,0.4)" stroke-width="1.5"/>
+          <text x="97" y="210" text-anchor="middle" fill="#00d4c8" font-size="8.5" font-weight="700" letter-spacing="1" font-family="Inter,sans-serif">POLARION MCP</text>
+          <text x="97" y="226" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="7.5" font-family="Inter,sans-serif">Cards · Releases · CPs</text>
+
+          <!-- DMS MCP box -->
+          <rect x="238" y="190" width="130" height="50" rx="10" fill="rgba(139,92,246,0.1)" stroke="rgba(139,92,246,0.4)" stroke-width="1.5"/>
+          <text x="303" y="210" text-anchor="middle" fill="#a78bfa" font-size="8.5" font-weight="700" letter-spacing="1" font-family="Inter,sans-serif">DMS MCP</text>
+          <text x="303" y="226" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="7.5" font-family="Inter,sans-serif">CP Status · Emails</text>
+
+          <!-- Arrow down from both to generate_dashboard -->
+          <line x1="97" y1="240" x2="97" y2="270" stroke="rgba(0,212,200,0.3)" stroke-width="1.5" stroke-dasharray="3 3"/>
+          <line x1="303" y1="240" x2="303" y2="270" stroke="rgba(139,92,246,0.3)" stroke-width="1.5" stroke-dasharray="3 3"/>
+          <line x1="97" y1="270" x2="303" y2="270" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+          <line x1="200" y1="270" x2="200" y2="288" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+          <polygon points="196,286 204,286 200,294" fill="rgba(255,255,255,0.25)"/>
+
+          <!-- Dashboard output box -->
+          <rect x="110" y="294" width="180" height="38" rx="10" fill="rgba(16,185,129,0.12)" stroke="rgba(16,185,129,0.45)" stroke-width="1.5"/>
+          <text x="200" y="311" text-anchor="middle" fill="#34d399" font-size="9" font-weight="700" letter-spacing="1" font-family="Inter,sans-serif">DASHBOARD + TEAMS LINKS</text>
+          <text x="200" y="324" text-anchor="middle" fill="rgba(255,255,255,0.4)" font-size="7.5" font-family="Inter,sans-serif">mfe-tcm-tracker-dashboard.html</text>
+
+          <!-- Live dot -->
+          <circle cx="336" cy="214" r="4" fill="#10b981"/>
+          <circle cx="336" cy="214" r="8" fill="rgba(16,185,129,0.2)">
+            <animate attributeName="r" values="4;10;4" dur="2s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0.6;0;0.6" dur="2s" repeatCount="indefinite"/>
+          </circle>
+
+          <!-- Label -->
+          <text x="200" y="8" text-anchor="middle" fill="rgba(255,255,255,0.2)" font-size="7" font-family="Inter,sans-serif" letter-spacing="2">SYSTEM ARCHITECTURE</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════ BENEFITS -->
+<section class="benefits-section">
+  <div class="container" style="text-align:center">
+    <div class="section-label" style="justify-content:center;display:flex">Business Impact</div>
+    <h2 class="section-title" style="text-align:center">Measurable results from day one</h2>
+
+    <div class="benefits-grid">
+      <div class="benefit-card">
+        <div class="benefit-num t">~90%</div>
+        <div class="benefit-label">Time Saved Per Cycle</div>
+        <div class="benefit-desc">What took 30–60 minutes of manual cross-checking now runs automatically — no context-switching, no manual queries.</div>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-num i">4</div>
+        <div class="benefit-label">Systems Unified</div>
+        <div class="benefit-desc">Polarion, DMS, MS Teams, and VS Code Copilot Chat — connected in a single workflow.</div>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-num g">Real-time</div>
+        <div class="benefit-label">Delivery Visibility</div>
+        <div class="benefit-desc">Managers get a live HTML dashboard showing exact CP status per branch — always up to date.</div>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-num t">Zero</div>
+        <div class="benefit-label">Missed Blockers</div>
+        <div class="benefit-desc">Proactive Teams notifications flag missing CPs and pending approvals before they stall releases.</div>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-num i">1-cmd</div>
+        <div class="benefit-label">Full Setup</div>
+        <div class="benefit-desc">Any team member can onboard in minutes with a single <code style="font-size:11px;background:rgba(99,102,241,.1);padding:1px 5px;border-radius:4px">.\setup.ps1</code> script.</div>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-num g">100%</div>
+        <div class="benefit-label">Internal &amp; Secure</div>
+        <div class="benefit-desc">All communication stays within internal Siemens infrastructure. No external APIs or data leakage.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═════════════════════════════════════════════════ FOOTER CTA -->
+<section class="cta-section">
+  <div class="cta-glow"></div>
+  <div class="container" style="position:relative">
+    <div style="display:inline-flex;align-items:center;gap:8px;margin-bottom:20px;font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:rgba(0,212,200,.7)">
+      <span style="display:block;width:30px;height:1px;background:linear-gradient(90deg,transparent,rgba(0,212,200,.6))"></span>
+      Next Steps
+      <span style="display:block;width:30px;height:1px;background:linear-gradient(90deg,rgba(0,212,200,.6),transparent)"></span>
+    </div>
+
+    <h2 class="cta-title">Ready to eliminate manual tracking?</h2>
+    <p class="cta-sub">One setup script. Any team member. Production-ready today.</p>
+
+    <div class="cta-btns">
+      <button class="btn-primary">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M8 3l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Request a Live Demo
+      </button>
+      <button class="btn-secondary">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M5 8h6M8 5v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Expand to Other Teams
+      </button>
+    </div>
+
+    <!-- Getting started snippet -->
+    <div style="margin-top:56px;max-width:500px;margin-left:auto;margin-right:auto">
+      <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:24px;text-align:left">
+        <div style="font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:rgba(0,212,200,.7);margin-bottom:14px">
+          Get started in 3 commands
+        </div>
+        <div style="font-family:monospace;font-size:13px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="color:rgba(0,212,200,.5);font-size:12px">01</span>
+            <span style="color:rgba(255,255,255,.6)">git clone &lt;repo-url&gt;</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="color:rgba(0,212,200,.5);font-size:12px">02</span>
+            <span style="color:rgba(255,255,255,.6)">cd mfe-tcm-tracker <span style="color:rgba(255,255,255,.3)">&amp;&amp;</span> .\setup.ps1</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="color:rgba(0,212,200,.5);font-size:12px">03</span>
+            <span style="color:rgba(255,255,255,.6)">@mfe-tcm-tracker <span style="color:var(--teal)">generate dashboard</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="footer-note">
+      MFE TCM Tracker · Internal Innovation · Siemens Digital Industries Software · 2026
+    </p>
+  </div>
+</section>
+
+
+<script>
+  // Intersection Observer for scroll-triggered animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll(
+    '.problem-item, .flow-step, .cap-card, .benefit-card'
+  ).forEach(el => observer.observe(el));
+
+  // Stagger problem items
+  document.querySelectorAll('.problem-item').forEach((el, i) => {
+    el.style.transitionDelay = `${i * 0.1}s`;
+    el.style.transition = 'opacity .5s, transform .5s';
+  });
+
+  // Stagger benefit cards
+  document.querySelectorAll('.benefit-card').forEach((el, i) => {
+    el.style.transitionDelay = `${i * 0.08}s`;
+    el.style.transition = 'opacity .5s, transform .5s';
+  });
+
+  // Stagger capability cards
+  document.querySelectorAll('.cap-card').forEach((el, i) => {
+    el.style.transitionDelay = `${i * 0.1}s`;
+    el.style.transition = 'opacity .5s, transform .5s, box-shadow .3s, border-color .3s';
+  });
+
+  // Animated counter for hero stats
+  function animateCounter(el, target, suffix = '') {
+    let start = 0;
+    const isSpecial = isNaN(parseFloat(target));
+    if (isSpecial) return; // skip non-numeric
+    const num = parseFloat(target);
+    const duration = 1800;
+    const step = duration / 60;
+    const increment = num / (duration / 16);
+    const timer = setInterval(() => {
+      start += increment;
+      if (start >= num) {
+        el.textContent = target + suffix;
+        clearInterval(timer);
+      } else {
+        el.textContent = Math.floor(start) + suffix;
+      }
+    }, 16);
+  }
+</script>
+
+</body>
+</html>
